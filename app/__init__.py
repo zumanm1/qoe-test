@@ -4,7 +4,6 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_cors import CORS
-from celery import Celery
 from config import config
 
 # Initialize extensions
@@ -12,7 +11,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
 socketio = SocketIO()
-celery = Celery()
+cors = CORS()
 
 def create_app(config_name='default'):
     app = Flask(__name__)
@@ -23,21 +22,21 @@ def create_app(config_name='default'):
     login_manager.init_app(app)
     migrate.init_app(app, db)
     socketio.init_app(app, cors_allowed_origins="*")
-    CORS(app)
-    
-    # Configure Celery
-    celery.conf.update(app.config)
+    cors.init_app(app)
     
     # Configure login manager
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
     
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models.user import User
+        return User.query.get(int(user_id))
+    
     # Register blueprints
     from app.views.auth import auth_bp
     from app.views.dashboard import dashboard_bp
     from app.views.troubleshooting import troubleshooting_bp
-
-    # Register feature04 blueprints
     from app.views.qoe_impact import qoe_impact_bp
     app.register_blueprint(qoe_impact_bp, url_prefix='/feature04')
 
@@ -71,15 +70,3 @@ def create_app(config_name='default'):
     register_commands(app)
     
     return app
-
-# Create Celery app
-def make_celery(app):
-    celery.conf.update(app.config)
-    
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-    
-    celery.Task = ContextTask
-    return celery

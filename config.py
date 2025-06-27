@@ -5,7 +5,7 @@ class Config:
     # Basic Configuration
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     basedir = os.path.abspath(os.path.dirname(__file__))
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'mtn_qoe.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'Mobile_qoe.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Security
@@ -25,10 +25,6 @@ class Config:
     
     # Redis Configuration
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://localhost:6379/0'
-    
-    # Celery Configuration
-    CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL') or 'redis://localhost:6379/0'
-    CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND') or 'redis://localhost:6379/0'
     
     # Performance Settings
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
