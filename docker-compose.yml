@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_DEBUG=0
+      - FLASK_ENV=production
+      - SECRET_KEY=change-this-in-production
+      - DATABASE_URL=postgresql://qoe_user:qoe_password@db:5432/qoe_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    restart: always
+    command: >
+      sh -c "flask db upgrade &&
+             gunicorn --bind 0.0.0.0:5000 --workers 2 run:app"
+
+  celery_worker:
+    build: .
+    environment:
+      - FLASK_APP=run.py
+      - DATABASE_URL=postgresql://qoe_user:qoe_password@db:5432/qoe_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+      - db
+    restart: always
+    command: celery -A run:celery worker --loglevel=info
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=qoe_user
+      - POSTGRES_PASSWORD=qoe_password
+      - POSTGRES_DB=qoe_db
+    restart: always
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - redis_data:/data
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  redis_data:

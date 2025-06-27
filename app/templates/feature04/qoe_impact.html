@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/feature04.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="qoe-impact-dashboard">
+    <header class="dashboard-header text-center mb-4">
+        <h1>Mobile QoE Impact Dashboard</h1>
+        <p class="lead">Real-time Network Performance Optimization</p>
+    </header>
+
+    <!-- Overall QoE Score -->
+    <div class="dashboard-card mb-4">
+        <div class="card-body text-center">
+            <h2 class="qoe-score">56</h2>
+            <p class="qoe-score-label">Overall QoE Score</p>
+            <p class="qoe-score-status text-warning">Needs Improvement</p>
+        </div>
+    </div>
+
+    <!-- Key Performance Indicators -->
+    <div class="dashboard-card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Key Performance Indicators</h5>
+            <ul class="list-group list-group-flush kpi-list">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Download Speed
+                    <span class="badge">90 Mbps</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Upload Speed
+                    <span class="badge">36 Mbps</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Latency
+                    <span class="badge">32 ms</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Jitter
+                    <span class="badge">5.1 ms</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Packet Loss
+                    <span class="badge">0.01%</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Reliability
+                    <span class="badge">99.9%</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Performance Radar -->
+    <div class="dashboard-card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Performance Radar</h5>
+            <canvas id="performanceRadarChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Domain Impact Analysis -->
+    <div class="dashboard-card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Domain Impact Analysis</h5>
+            <canvas id="domainImpactChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Interactive Domain Parameters -->
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Radio Access Network Card -->
+            <div class="dashboard-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-broadcast-tower me-2 text-danger"></i> Radio Access Network</h5>
+                    <div class="slider-group">
+                        <label for="txPower">TX Power (dBm): 46</label>
+                        <input type="range" class="form-range" id="txPower" min="30" max="50" value="46">
+                    </div>
+                    <div class="slider-group">
+                        <label for="antennaGain">Antenna Gain (dBi): 18</label>
+                        <input type="range" class="form-range" id="antennaGain" min="10" max="25" value="18">
+                    </div>
+                    <div class="form-group">
+                        <label for="bandwidth">Bandwidth (MHz)</label>
+                        <select class="form-select" id="bandwidth">
+                            <option>5 MHz</option>
+                            <option>10 MHz</option>
+                            <option selected>20 MHz</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="mimoConfig">MIMO Configuration</label>
+                        <select class="form-select" id="mimoConfig">
+                            <option>2x2</option>
+                            <option selected>4x4</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- Transport Network Card -->
+            <div class="dashboard-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-network-wired me-2 text-warning"></i> Transport Network</h5>
+                    <div class="slider-group">
+                        <label for="linkCapacity">Link Capacity (Mbps): 1000</label>
+                        <input type="range" class="form-range" id="linkCapacity" min="100" max="10000" value="1000">
+                    </div>
+                    <div class="slider-group">
+                        <label for="bufferSize">Buffer Size (packets): 1000</label>
+                        <input type="range" class="form-range" id="bufferSize" min="100" max="5000" value="1000">
+                    </div>
+                    <div class="slider-group">
+                        <label for="qosPriority">QoS Priority: 5</label>
+                        <input type="range" class="form-range" id="qosPriority" min="1" max="8" value="5">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Core Network Card -->
+            <div class="dashboard-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-server me-2 text-success"></i> Core Network</h5>
+                    <div class="slider-group">
+                        <label for="routingOpt">Routing Optimization: 8</label>
+                        <input type="range" class="form-range" id="routingOpt" min="1" max="10" value="8">
+                    </div>
+                    <div class="slider-group">
+                        <label for="loadBalancing">Load Balancing: 7</label>
+                        <input type="range" class="form-range" id="loadBalancing" min="1" max="10" value="7">
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="mplsSwitch" checked>
+                        <label class="form-check-label" for="mplsSwitch">MPLS Traffic Engineering</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- Packet Core Card -->
+            <div class="dashboard-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-project-diagram me-2 text-info"></i> Packet Core</h5>
+                    <div class="form-group">
+                        <label for="qciClass">Bearer QCI Class</label>
+                        <select class="form-select" id="qciClass">
+                            <option>QCI 1 (Conversational Voice)</option>
+                            <option>QCI 5 (IMS Signaling)</option>
+                            <option selected>QCI 9 (Default Bearer)</option>
+                        </select>
+                    </div>
+                    <div class="slider-group">
+                        <label for="policyEnforcement">Policy Enforcement: 6</label>
+                        <input type="range" class="form-range" id="policyEnforcement" min="1" max="10" value="6">
+                    </div>
+                    <div class="slider-group">
+                        <label for="sessionTimeout">Session Timeout (sec): 300</label>
+                        <input type="range" class="form-range" id="sessionTimeout" min="60" max="1800" value="300">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Trends & Domain Ranking -->
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Performance Trends Card -->
+            <div class="dashboard-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Performance Trends</h5>
+                    <canvas id="performanceTrendsChart"></canvas>
+                    <div class="chart-legend text-center mt-3">
+                        <span class="legend-item qoe-score-legend">QoE Score</span>
+                        <span class="legend-item download-legend">Download (Mbps)</span>
+                        <span class="legend-item latency-legend">Latency (ms)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- Domain Impact Ranking Card -->
+            <div class="dashboard-card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Domain Impact Ranking</h5>
+                    <ul class="list-group list-group-flush ranking-list">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="rank-number">#1</span> <i class="fas fa-circle text-success me-2"></i> Core Network</span>
+                            <span class="impact-score">80% <small>Impact Score</small></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="rank-number">#2</span> <i class="fas fa-circle text-warning me-2"></i> Transport</span>
+                            <span class="impact-score">68% <small>Impact Score</small></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="rank-number">#3</span> <i class="fas fa-circle text-primary me-2"></i> Application</span>
+                            <span class="impact-score">53% <small>Impact Score</small></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="rank-number">#4</span> <i class="fas fa-circle text-info me-2"></i> Packet Core</span>
+                            <span class="impact-score">41% <small>Impact Score</small></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><span class="rank-number">#5</span> <i class="fas fa-circle text-danger me-2"></i> Radio Access</span>
+                            <span class="impact-score">25% <small>Impact Score</small></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/feature04_charts.js') }}"></script>
+{% endblock %}

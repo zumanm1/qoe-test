@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Mobile Network QoE Tool{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="mb-4">
+                <img src="{{ url_for('static', filename='img/mtn_logo.png') }}" alt="Mobile Logo" class="img-fluid" style="max-height: 80px;">
+            </div>
+            <h1 class="display-4 mb-4">Network QoE Tool</h1>
+            <p class="lead mb-5">A comprehensive platform for monitoring and optimizing network quality of experience.</p>
+
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow">
+                        <div class="card-body text-center pt-4">
+                            <div class="icon-circle bg-primary text-white mb-4">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <h5 class="card-title">Dashboard</h5>
+                            <p class="card-text">Monitor network KPIs and performance metrics</p>
+                            <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-primary mt-2">Launch</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow">
+                        <div class="card-body text-center pt-4">
+                            <div class="icon-circle bg-success text-white mb-4">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h5 class="card-title">Simulation</h5>
+                            <p class="card-text">Test and simulate network parameters</p>
+                            <a href="{{ url_for('simulation.index') }}" class="btn btn-outline-success mt-2">Launch</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow">
+                        <div class="card-body text-center pt-4">
+                            <div class="icon-circle bg-info text-white mb-4">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <h5 class="card-title">Network Topology</h5>
+                            <p class="card-text">Visualize network elements and connections</p>
+                            <a href="{{ url_for('dashboard.network_topology') }}" class="btn btn-outline-info mt-2">Launch</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Log In
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        font-size: 24px;
+    }
+</style>
+{% endblock %}

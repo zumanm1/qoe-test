@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+
+{% block title %}Network Reports - Mobile Network QoE Tool{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-file-alt me-2"></i>Network QoE Reports</h2>
+        <div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-download me-1"></i>Export
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{{ url_for('reports.export_kpi_data') }}?time_range=day">Export KPI Data (CSV)</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('reports.export_chart', chart_type='domain_health') }}?time_range=day">Export Health Chart (PNG)</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('reports.export_chart', chart_type='qoe_trend') }}?time_range=day">Export QoE Trend (PNG)</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report types -->
+    <div class="row mb-4">
+        {% for report_id, report_name in report_types %}
+        <div class="col-md-3 mb-3">
+            <div class="card shadow h-100 dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ report_name }}</h5>
+                    <p class="card-text text-muted">
+                        {% if report_id == 'kpi_trends' %}
+                        View trends and patterns in key performance indicators over time
+                        {% elif report_id == 'domain_health' %}
+                        Monitor the health of network domains and components
+                        {% elif report_id == 'qoe_analysis' %}
+                        Analyze Quality of Experience scores and performance patterns
+                        {% elif report_id == 'alerts_summary' %}
+                        Summary of network alerts and issues by severity and domain
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('reports.' + report_id) }}" class="btn btn-primary">View Report</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Report filters -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-white">
+            <h5 class="card-title mb-0">Report Filters</h5>
+        </div>
+        <div class="card-body">
+            <form id="report-filters" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Time Range</label>
+                    <div class="btn-group w-100" role="group">
+                        {% for range_id, range_name in time_ranges %}
+                        <input type="radio" class="btn-check" name="time_range" id="time_{{ range_id }}" value="{{ range_id }}" {% if range_id == 'day' %}checked{% endif %}>
+                        <label class="btn btn-outline-secondary" for="time_{{ range_id }}">{{ range_name }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="domain_filter" class="form-label">Network Domain</label>
+                    <select class="form-select" id="domain_filter" name="domain">
+                        <option value="">All Domains</option>
+                        {% for domain in domains %}
+                        <option value="{{ domain }}">{{ domain|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
+                    <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick insights -->
+    <h4 class="mb-3">Quick Insights</h4>
+    <div class="row mb-4">
+        <!-- QoE trend -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">QoE Performance Trend</h5>
+                    <a href="{{ url_for('reports.qoe_analysis') }}" class="btn btn-sm btn-outline-primary">Full Report</a>
+                </div>
+                <div class="card-body">
+                    <canvas id="qoeTrendChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain health summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Domain Health</h5>
+                    <a href="{{ url_for('reports.domain_health') }}" class="btn btn-sm btn-outline-primary">Full Report</a>
+                </div>
+                <div class="card-body">
+                    <canvas id="domainHealthChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent alerts summary -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Recent Alert Summary</h5>
+                    <a href="{{ url_for('reports.alerts_summary') }}" class="btn btn-sm btn-outline-primary">Full Report</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Severity</th>
+                                    <th>Message</th>
+                                    <th>Element</th>
+                                    <th>Domain</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alerts-table-body">
+                                <!-- This will be populated via JavaScript -->
+                                <tr>
+                                    <td colspan="6" class="text-center py-3">Loading alert data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // QoE trend chart
+    const qoeTrendData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Average QoE Score',
+            data: [78, 82, 80, 85, 83, 87],
+            borderColor: '#3498db',
+            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    const qoeTrendChart = new Chart(
+        document.getElementById('qoeTrendChart').getContext('2d'),
+        {
+            type: 'line',
+            data: qoeTrendData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'QoE Score (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        }
+    );
+
+    // Domain health chart
+    const domainHealthData = {
+        labels: ['RAN', 'Transport', 'Core', 'Internet'],
+        datasets: [{
+            label: 'Health Score',
+            data: [85, 92, 78, 88],
+            backgroundColor: [
+                'rgba(52, 152, 219, 0.7)',  // RAN - blue
+                'rgba(46, 204, 113, 0.7)',  // Transport - green
+                'rgba(155, 89, 182, 0.7)',  // Core - purple
+                'rgba(230, 126, 34, 0.7)'   // Internet - orange
+            ],
+            borderColor: [
+                'rgb(52, 152, 219)',
+                'rgb(46, 204, 113)',
+                'rgb(155, 89, 182)',
+                'rgb(230, 126, 34)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    const domainHealthChart = new Chart(
+        document.getElementById('domainHealthChart').getContext('2d'),
+        {
+            type: 'bar',
+            data: domainHealthData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Health Score (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        }
+    );
+
+    // Load alert data
+    function loadAlertData() {
+        // In a real implementation, this would fetch data from the server
+        const alertsData = [
+            {
+                severity: 'high',
+                message: 'Excessive packet loss on transport link',
+                element: 'TL-001',
+                domain: 'transport',
+                time: '10:15',
+                status: 'unacknowledged'
+            },
+            {
+                severity: 'medium',
+                message: 'Signal strength degradation',
+                element: 'Cell-B12',
+                domain: 'ran',
+                time: '09:32',
+                status: 'acknowledged'
+            },
+            {
+                severity: 'high',
+                message: 'Core router CPU utilization > 90%',
+                element: 'CR-03',
+                domain: 'core',
+                time: '11:05',
+                status: 'unacknowledged'
+            },
+            {
+                severity: 'low',
+                message: 'Minor latency increase detected',
+                element: 'GW-02',
+                domain: 'internet',
+                time: '08:47',
+                status: 'acknowledged'
+            }
+        ];
+
+        const tableBody = document.getElementById('alerts-table-body');
+        tableBody.innerHTML = '';
+
+        alertsData.forEach(alert => {
+            // Set color classes based on severity
+            let severityClass = 'bg-info text-white';
+            if (alert.severity === 'high') severityClass = 'bg-danger text-white';
+            if (alert.severity === 'medium') severityClass = 'bg-warning';
+            
+            // Set status badge
+            let statusBadge = 'bg-secondary';
+            if (alert.status === 'unacknowledged') statusBadge = 'bg-danger';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><span class="badge ${severityClass}">${alert.severity}</span></td>
+                <td>${alert.message}</td>
+                <td>${alert.element}</td>
+                <td>${alert.domain.toUpperCase()}</td>
+                <td>${alert.time}</td>
+                <td><span class="badge ${statusBadge}">${alert.status}</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+    
+    loadAlertData();
+
+    // Handle filter form submission
+    document.getElementById('report-filters').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const timeRange = formData.get('time_range');
+        const domain = formData.get('domain');
+        
+        console.log(`Applying filters: timeRange=${timeRange}, domain=${domain}`);
+        
+        // In a real app, this would update the charts and tables with filtered data
+        
+        // For this demo, simulate loading and then just update the charts with random data
+        qoeTrendChart.data.datasets[0].data = Array(6).fill(0).map(() => Math.floor(Math.random() * 30) + 70);
+        qoeTrendChart.update();
+        
+        domainHealthChart.data.datasets[0].data = Array(4).fill(0).map(() => Math.floor(Math.random() * 30) + 70);
+        domainHealthChart.update();
+        
+        loadAlertData();
+    });
+});
+</script>
+{% endblock %}

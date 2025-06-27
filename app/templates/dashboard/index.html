@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Mobile Network QoE Tool{% endblock %}
+
+{% block extra_css %}
+<style>
+    .domain-card {
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+    .domain-card:hover {
+        transform: translateY(-5px);
+    }
+    .kpi-indicator {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .status-good { background-color: #2ecc71; }
+    .status-warning { background-color: #f1c40f; }
+    .status-critical { background-color: #e74c3c; }
+    .status-unknown { background-color: #95a5a6; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-tachometer-alt me-2"></i>Network QoE Dashboard</h2>
+        <div>
+            <span class="badge bg-secondary me-2">Last updated: <span id="last-update-time">{{ now().strftime('%H:%M:%S') }}</span></span>
+            <button class="btn btn-sm btn-outline-primary" id="refresh-btn">
+                <i class="fas fa-sync-alt me-1"></i>Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase fw-bold mb-1">Network Elements</h6>
+                            <h2 class="mb-0">{{ total_elements }}</h2>
+                        </div>
+                        <i class="fas fa-network-wired fa-3x opacity-50"></i>
+                    </div>
+                    <small>{{ active_elements }} active / {{ total_elements - active_elements }} inactive</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase fw-bold mb-1">Overall QoE</h6>
+                            <h2 class="mb-0"><span id="overall-qoe">85</span><small>%</small></h2>
+                        </div>
+                        <i class="fas fa-chart-line fa-3x opacity-50"></i>
+                    </div>
+                    <small>Based on latest performance data</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase fw-bold mb-1">Active Alerts</h6>
+                            <h2 class="mb-0">{{ recent_alerts|selectattr('acknowledged', 'equalto', false)|list|length }}</h2>
+                        </div>
+                        <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+                    </div>
+                    <small>{{ recent_alerts|length }} total alerts in last 24 hours</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase fw-bold mb-1">Performance Tests</h6>
+                            <h2 class="mb-0">{{ recent_tests|length }}</h2>
+                        </div>
+                        <i class="fas fa-vial fa-3x opacity-50"></i>
+                    </div>
+                    <small>Last test: {{ recent_tests[0].timestamp.strftime('%Y-%m-%d %H:%M') if recent_tests else 'No recent tests' }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Domain cards -->
+    <h4 class="mb-3">Domain Health</h4>
+    <div class="row mb-4">
+        {% set domains = ['ran', 'transport', 'core', 'internet'] %}
+        {% set domain_icons = {
+            'ran': 'fas fa-broadcast-tower',
+            'transport': 'fas fa-exchange-alt',
+            'core': 'fas fa-server',
+            'internet': 'fas fa-globe'
+        } %}
+        
+        {% for domain in domains %}
+            {% set domain_data = elements_by_domain[domain] %}
+            {% set health_pct = (domain_data.active / domain_data.total * 100) if domain_data.total > 0 else 0 %}
+            {% set health_color = 'success' if health_pct >= 90 else 'warning' if health_pct >= 60 else 'danger' %}
+            
+            <div class="col-md-3 mb-4">
+                <a href="{{ url_for('dashboard.domain_view', domain=domain) }}" class="text-decoration-none">
+                    <div class="card shadow domain-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title text-uppercase">{{ domain }}</h5>
+                                <i class="{{ domain_icons[domain] }} fa-lg text-primary"></i>
+                            </div>
+                            <div class="progress mb-2 mt-3">
+                                <div class="progress-bar bg-{{ health_color }}" role="progressbar" style="width: {{ health_pct }}%"
+                                     aria-valuenow="{{ health_pct }}" aria-valuemin="0" aria-valuemax="100">
+                                    {{ '%0.1f'|format(health_pct) }}%
+                                </div>
+                            </div>
+                            <div class="text-muted small">
+                                <span class="text-{{ health_color }}">●</span> 
+                                {{ domain_data.active }} active / {{ domain_data.total }} total
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        <!-- QoE chart -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">QoE Performance Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="qoeChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent alerts -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Recent Alerts</h5>
+                    <a href="{{ url_for('dashboard.alerts') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_alerts %}
+                        <div class="list-group list-group-flush">
+                            {% for alert in recent_alerts[:5] %}
+                                <a href="#" class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            {% if alert.severity == 'high' %}
+                                                <span class="kpi-indicator status-critical"></span>
+                                            {% elif alert.severity == 'medium' %}
+                                                <span class="kpi-indicator status-warning"></span>
+                                            {% else %}
+                                                <span class="kpi-indicator status-good"></span>
+                                            {% endif %}
+                                            <span class="fw-bold">{{ alert.message }}</span>
+                                        </div>
+                                        <span class="badge bg-secondary">{{ alert.created_at.strftime('%H:%M') }}</span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                            <p class="text-muted">No alerts in the last 24 hours.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // QoE chart
+    const ctx = document.getElementById('qoeChart').getContext('2d');
+    const qoeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+            datasets: [{
+                label: 'Overall QoE Score',
+                data: [82, 88, 74, 85, 90, 85],
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'QoE Score (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time (Last 24 hours)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Real-time updates via Socket.IO
+    const socket = io();
+    
+    socket.on('connect', function() {
+        console.log('Connected to server');
+    });
+    
+    socket.on('kpi_update', function(data) {
+        console.log('KPI update received:', data);
+        updateQoEChart(data);
+        updateLastUpdatedTime();
+    });
+    
+    socket.on('alert', function(data) {
+        console.log('New alert received:', data);
+        showAlertNotification(data);
+    });
+    
+    // Refresh button
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+        fetchLatestData();
+        updateLastUpdatedTime();
+    });
+    
+    function fetchLatestData() {
+        // In a real app, this would fetch data from the server
+        console.log('Fetching latest data...');
+    }
+    
+    function updateQoEChart(data) {
+        if (data && data.qoe_values && data.timestamps) {
+            qoeChart.data.labels = data.timestamps;
+            qoeChart.data.datasets[0].data = data.qoe_values;
+            qoeChart.update();
+            
+            // Update overall QoE with latest value
+            const latestQoE = data.qoe_values[data.qoe_values.length - 1];
+            document.getElementById('overall-qoe').textContent = latestQoE;
+        }
+    }
+    
+    function updateLastUpdatedTime() {
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+        document.getElementById('last-update-time').textContent = timeStr;
+    }
+    
+    function showAlertNotification(data) {
+        // This would show a toast notification in a real app
+        console.log('Alert notification:', data.message);
+    }
+});
+</script>
+{% endblock %}

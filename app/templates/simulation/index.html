@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block title %}QoE Simulation - Mobile Network QoE Tool{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-rocket me-2"></i>Mobile Network QoE Impact Simulator with Protocol Layers</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Network Topology & Protocol Stack</h6>
+        </div>
+        <div class="card-body" style="overflow-x: auto; padding-top: 20px;">
+            <div style="position: relative; height: 180px; min-width: 2990px;">
+                <!-- Protocol Stack -->
+                <!-- These values are approximations based on the number of nodes -->
+                <div class="protocol-segment segment-ip" style="left: 1270px; width: 170px; top: 0px;">IP</div>
+                <div class="protocol-segment segment-ip" style="left: 1990px; width: 790px; top: 0px;">IP</div>
+                <div class="protocol-segment segment-ip-mpls" style="left: 370px; width: 710px; top: 40px;">IP-MPLS</div>
+                <div class="protocol-segment segment-ip-mpls" style="left: 1450px; width: 350px; top: 40px;">IP-MPLS</div>
+                <div class="protocol-segment segment-gtp-uic" style="left: 190px; width: 1800px; top: 80px;">GTP-UIC</div>
+
+                <!-- Network Flow Diagram -->
+                <div class="network-flow-container" style="position: absolute; top: 120px;">
+                    <div class="network-node node-ran"><div class="node-title">UE</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-ran"><div class="node-title">eNodeB</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-transport"><div class="node-title">POC4 PR</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-transport"><div class="node-title">POC4 DC</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-transport"><div class="node-title">POC3</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-transport"><div class="node-title">POC2</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-core"><div class="node-title">POC1 ASBR</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-core"><div class="node-title">Core PE1</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-core"><div class="node-title">Core P</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-core"><div class="node-title">Core PE2</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-packet-core"><div class="node-title">S-GW</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-packet-core"><div class="node-title">P-GW</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-internet"><div class="node-title">IGW</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-internet"><div class="node-title">INS PE</div></div>
+                    <div class="flow-arrow">&rightarrow;</div>
+                    <div class="network-node node-internet"><div class="node-title">Ookla</div></div>
+                </div>
+            </div>
+
+            <!-- Protocol Legend -->
+            <div class="protocol-legend">
+                <div class="protocol-legend-item"><span class="protocol-legend-color-box" style="background-color: #28a745;"></span> GTP-UIC: eNodeB-S-GW</div>
+                <div class="protocol-legend-item"><span class="protocol-legend-color-box" style="background-color: #8E44AD;"></span> IP-MPLS: POC4..POC1, PE1..PE2</div>
+                <div class="protocol-legend-item"><span class="protocol-legend-color-box" style="background-color: #f0ad4e;"></span> IP: POC1..PE1, S-GW..Ookla</div>
+            </div>
+
+            <!-- Domain impacts -->
+            <h6>Domain Impact Analysis</h6>
+            <div class="mb-4">
+                {% set domains = [('ran', 'RAN'), ('transport', 'Transport'), ('core', 'Core'), ('internet', 'Internet')] %}
+                {% for domain_id, domain_name in domains %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ domain_name }}</span>
+                            <span id="{{ domain_id }}-impact">80</span>
+                        </div>
+                        <div class="progress" style="height: 10px">
+                            <div class="progress-bar bg-success" id="{{ domain_id }}-progress" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Save scenario form -->
+            <div class="card mb-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Save This Scenario</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="scenario-name" class="form-label">Scenario Name</label>
+                        <input type="text" class="form-control" id="scenario-name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="scenario-description" class="form-label">Description</label>
+                        <textarea class="form-control" id="scenario-description" rows="2"></textarea>
+                    </div>
+                    <button type="button" id="save-scenario-btn" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Save Scenario
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recommendations -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Optimization Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    <div id="recommendations-container">
+                        <!-- Recommendations will be dynamically loaded here -->
+                        <div class="text-center py-3">
+                            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                            <p>Calculate QoE to see recommendations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved scenarios -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Saved Scenarios</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" id="saved-scenarios">
+                        <!-- Saved scenarios will be dynamically loaded here -->
+                        <div class="text-center py-4">
+                            <i class="fas fa-spinner fa-spin mb-3"></i>
+                            <p>Loading saved scenarios...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive KPI Controls and Results -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Simulation Parameters</h6>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="kpi-accordion">
+                    <!-- RAN Parameters -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingRan">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRan" aria-expanded="true" aria-controls="collapseRan">
+                                Radio Access Network (RAN)
+                            </button>
+                        </h2>
+                        <div id="collapseRan" class="accordion-collapse collapse show" aria-labelledby="headingRan" data-bs-parent="#kpi-accordion">
+                            <div class="accordion-body">
+                                <div class="param-slider-container">
+                                    <label for="signal_strength" class="param-slider-label"><span>Signal Strength (dBm)</span><span id="signal_strength-value">-65</span></label>
+                                    <input type="range" class="form-range param-slider" id="signal_strength" min="-110" max="-30" value="-65">
+                                </div>
+                                <div class="param-slider-container">
+                                    <label for="rsrq" class="param-slider-label"><span>RSRQ (dB)</span><span id="rsrq-value">-9</span></label>
+                                    <input type="range" class="form-range param-slider" id="rsrq" min="-20" max="-3" value="-9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Transport Parameters -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTransport">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="false" aria-controls="collapseTransport">
+                                Transport Network
+                            </button>
+                        </h2>
+                        <div id="collapseTransport" class="accordion-collapse collapse" aria-labelledby="headingTransport" data-bs-parent="#kpi-accordion">
+                            <div class="accordion-body">
+                                <div class="param-slider-container">
+                                    <label for="transport_latency" class="param-slider-label"><span>Latency (ms)</span><span id="transport_latency-value">20</span></label>
+                                    <input type="range" class="form-range param-slider" id="transport_latency" min="5" max="100" value="20">
+                                </div>
+                                <div class="param-slider-container">
+                                    <label for="transport_jitter" class="param-slider-label"><span>Jitter (ms)</span><span id="transport_jitter-value">5</span></label>
+                                    <input type="range" class="form-range param-slider" id="transport_jitter" min="1" max="50" value="5">
+                                </div>
+                                <div class="param-slider-container">
+                                    <label for="transport_packet_loss" class="param-slider-label"><span>Packet Loss (%)</span><span id="transport_packet_loss-value">0.1</span></label>
+                                    <input type="range" class="form-range param-slider" id="transport_packet_loss" min="0" max="5" step="0.1" value="0.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Core Network Parameters -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCore">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCore" aria-expanded="false" aria-controls="collapseCore">
+                                Core Network
+                            </button>
+                        </h2>
+                        <div id="collapseCore" class="accordion-collapse collapse" aria-labelledby="headingCore" data-bs-parent="#kpi-accordion">
+                            <div class="accordion-body">
+                                <div class="param-slider-container">
+                                    <label for="core_latency" class="param-slider-label"><span>Latency (ms)</span><span id="core_latency-value">10</span></label>
+                                    <input type="range" class="form-range param-slider" id="core_latency" min="2" max="50" value="10">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Packet Core Parameters -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPacketCore">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePacketCore" aria-expanded="false" aria-controls="collapsePacketCore">
+                                Packet Core
+                            </button>
+                        </h2>
+                        <div id="collapsePacketCore" class="accordion-collapse collapse" aria-labelledby="headingPacketCore" data-bs-parent="#kpi-accordion">
+                            <div class="accordion-body">
+                                <div class="param-slider-container">
+                                    <label for="packet_core_latency" class="param-slider-label"><span>Latency (ms)</span><span id="packet_core_latency-value">5</span></label>
+                                    <input type="range" class="form-range param-slider" id="packet_core_latency" min="1" max="30" value="5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Simulation Results</h6>
+            </div>
+            <div class="card-body">
+                <div class="qoe-gauge-container">
+                    <div class="qoe-gauge-arc"></div>
+                    <div class="qoe-gauge-fill" id="qoe-gauge-fill"></div>
+                    <div class="qoe-gauge-text" id="qoe-score-text">...</div>
+                </div>
+                <p class="qoe-gauge-label">Overall QoE Score</p>
+                <hr>
+                <ul class="results-list">
+                    <li><span>Throughput (Mbps)</span><strong id="result-throughput">...</strong></li>
+                    <li><span>Latency (ms)</span><strong id="result-latency">...</strong></li>
+                    <li><span>Jitter (ms)</span><strong id="result-jitter">...</strong></li>
+                    <li><span>Packet Loss (%)</span><strong id="result-packet-loss">...</strong></li>
+                </ul>
+                <hr>
+                <!-- Domain Impact Analysis -->
+                <h6>Domain Impact Analysis</h6>
+                <div class="mb-3">
+                    {% set domains = [('ran', 'RAN'), ('transport', 'Transport'), ('core', 'Core'), ('packet_core', 'Packet Core')] %}
+                    {% for domain_id, domain_name in domains %}
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>{{ domain_name }}</span>
+                                <span id="{{ domain_id }}-impact-score">100</span>
+                            </div>
+                            <div class="progress" style="height: 10px">
+                                <div class="progress-bar" id="{{ domain_id }}-impact-bar" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                <!-- Save Scenario -->
+                <h6>Save Scenario</h6>
+                <div class="mb-3">
+                    <label for="scenario-name" class="form-label">Scenario Name</label>
+                    <input type="text" class="form-control" id="scenario-name" placeholder="e.g., Degraded RAN Performance">
+                </div>
+                <div class="mb-3">
+                    <label for="scenario-description" class="form-label">Description</label>
+                    <textarea class="form-control" id="scenario-description" rows="2" placeholder="Conditions for this simulation."></textarea>
+                </div>
+                <button type="button" id="save-scenario-btn" class="btn btn-primary w-100">
+                    <i class="fas fa-save me-1"></i>Save Scenario
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const sliders = document.querySelectorAll('.param-slider');
+
+    function updateSliderValue(slider) {
+        const displayId = slider.id + '-value';
+        document.getElementById(displayId).textContent = slider.value;
+    }
+
+    function calculateDomainScores(params) {
+        const scores = { ran: 100, transport: 100, core: 100, packet_core: 100 };
+        scores.ran -= Math.max(0, (-85 - params.signal_strength) * 1.5) + Math.max(0, (-12 - params.rsrq) * 3);
+        scores.transport -= Math.max(0, (params.transport_latency - 20) * 0.5) + Math.max(0, (params.transport_jitter - 5) * 1) + (params.transport_packet_loss * 10);
+        scores.core -= Math.max(0, (params.core_latency - 10) * 0.8);
+        scores.packet_core -= Math.max(0, (params.packet_core_latency - 5) * 1.2);
+        for (const domain in scores) { scores[domain] = Math.max(0, Math.min(100, scores[domain])); }
+        return scores;
+    }
+
+    function updateResultsUI(score, params) {
+        document.getElementById('qoe-score-text').textContent = Math.round(score);
+        const gaugeFill = document.getElementById('qoe-gauge-fill');
+        const rotation = -45 + ((score / 100) * 180);
+        gaugeFill.style.transform = `rotate(${rotation}deg)`;
+        gaugeFill.style.borderColor = score < 40 ? '#dc3545' : score < 70 ? '#ffc107' : '#28a745';
+
+        const totalLatency = params.transport_latency + params.core_latency + params.packet_core_latency;
+        document.getElementById('result-throughput').textContent = (score * 0.8).toFixed(1);
+        document.getElementById('result-latency').textContent = totalLatency.toFixed(0);
+        document.getElementById('result-jitter').textContent = params.transport_jitter.toFixed(0);
+        document.getElementById('result-packet-loss').textContent = params.transport_packet_loss.toFixed(2);
+
+        const domainScores = calculateDomainScores(params);
+        for (const domain in domainScores) {
+            const scoreValue = Math.round(domainScores[domain]);
+            document.getElementById(`${domain}-impact-score`).textContent = scoreValue;
+            const progressBar = document.getElementById(`${domain}-impact-bar`);
+            progressBar.style.width = `${scoreValue}%`;
+            progressBar.style.backgroundColor = scoreValue < 40 ? '#dc3545' : scoreValue < 70 ? '#ffc107' : '#28a745';
+        }
+    }
+
+    function runSimulation() {
+        const params = {};
+        sliders.forEach(slider => { params[slider.id] = parseFloat(slider.value); });
+        const domainScores = calculateDomainScores(params);
+        const overallScore = (domainScores.ran * 0.4) + (domainScores.transport * 0.3) + (domainScores.core * 0.15) + (domainScores.packet_core * 0.15);
+        updateResultsUI(overallScore, params);
+    }
+
+    sliders.forEach(slider => {
+        updateSliderValue(slider);
+        slider.addEventListener('input', () => { updateSliderValue(slider); runSimulation(); });
+    });
+
+    document.getElementById('save-scenario-btn').addEventListener('click', function() {
+        const scenarioName = document.getElementById('scenario-name').value;
+        if (!scenarioName) { alert('Please provide a name for the scenario.'); return; }
+        const params = {};
+        sliders.forEach(slider => { params[slider.id] = parseFloat(slider.value); });
+        const payload = {
+            name: scenarioName,
+            description: document.getElementById('scenario-description').value,
+            parameters: params,
+            results: {
+                qoe_score: parseFloat(document.getElementById('qoe-score-text').textContent),
+                throughput: parseFloat(document.getElementById('result-throughput').textContent),
+                latency: parseFloat(document.getElementById('result-latency').textContent),
+                jitter: parseFloat(document.getElementById('result-jitter').textContent),
+                packet_loss: parseFloat(document.getElementById('result-packet-loss').textContent)
+            }
+        };
+        console.log('Saving scenario:', JSON.stringify(payload, null, 2));
+        alert('Scenario saved! (This is a placeholder action).');
+    });
+
+    runSimulation();
+});
+</script>
+{% endblock %}

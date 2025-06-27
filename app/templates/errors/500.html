@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Server Error - Mobile Network QoE Tool{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body text-center p-5">
+                    <div class="display-1 text-danger mb-4">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h1 class="h2 mb-4">Server Error</h1>
+                    <p class="lead text-muted mb-5">The server encountered an internal error and was unable to complete your request.</p>
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Return to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

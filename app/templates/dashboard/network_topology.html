@@ -1,0 +1,360 @@
+{% extends 'base.html' %}
+
+{% block title %}Network Topology - Mobile Network QoE Tool{% endblock %}
+
+{% block extra_css %}
+<style>
+    .network-topology-container {
+        width: 100%;
+        height: 600px;
+        background-color: #fff;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        position: relative;
+    }
+    
+    .network-topology-svg {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .nodes circle {
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+    
+    .links line {
+        stroke: #999;
+        stroke-opacity: 0.6;
+    }
+    
+    .node-status-healthy circle {
+        stroke: #2ecc71;
+        stroke-width: 2px;
+    }
+    
+    .node-status-warning circle {
+        stroke: #f1c40f;
+        stroke-width: 2px;
+    }
+    
+    .node-status-critical circle {
+        stroke: #e74c3c;
+        stroke-width: 2px;
+    }
+    
+    .node text {
+        fill: #333;
+        font-weight: bold;
+        text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    }
+    
+    .link-status-healthy {
+        stroke: #2ecc71;
+    }
+    
+    .link-status-warning {
+        stroke: #f1c40f;
+    }
+    
+    .link-status-critical {
+        stroke: #e74c3c;
+    }
+    
+    .highlighted {
+        stroke: #3498db;
+        stroke-width: 3px;
+        stroke-opacity: 1;
+    }
+    
+    .legend text {
+        fill: #333;
+    }
+    
+    .topology-controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 100;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-project-diagram me-2"></i>Network Topology</h2>
+        <div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-filter me-1"></i>Filter View
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#" data-domain="all">All Domains</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" data-domain="ran">RAN</a></li>
+                    <li><a class="dropdown-item" href="#" data-domain="transport">Transport</a></li>
+                    <li><a class="dropdown-item" href="#" data-domain="core">Core</a></li>
+                    <li><a class="dropdown-item" href="#" data-domain="internet">Internet</a></li>
+                </ul>
+            </div>
+            <button type="button" class="btn btn-outline-secondary" id="refresh-topology">
+                <i class="fas fa-sync-alt me-1"></i>Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Network topology overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Network Overview</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="network-topology-container" id="network-topology">
+                        <!-- D3.js will render the network topology here -->
+                        
+                        <!-- Controls overlay -->
+                        <div class="topology-controls">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="show-labels" checked>
+                                <label class="form-check-label" for="show-labels">
+                                    Show Labels
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="show-status" checked>
+                                <label class="form-check-label" for="show-status">
+                                    Show Status
+                                </label>
+                            </div>
+                            <div class="mb-2">
+                                <label for="zoom-level" class="form-label">Zoom</label>
+                                <input type="range" class="form-range" id="zoom-level" min="0.5" max="3" step="0.1" value="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network details panels -->
+    <div class="row">
+        <!-- Element details -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Element Details</h5>
+                </div>
+                <div class="card-body" id="element-details">
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-info-circle fa-3x mb-3"></i>
+                        <p>Select a network element to view details</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Path analysis -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Path Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <form id="path-analysis-form" class="mb-3">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <label for="source-node" class="form-label">Source</label>
+                                <select class="form-select" id="source-node">
+                                    <option value="" selected disabled>Select source</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="target-node" class="form-label">Target</label>
+                                <select class="form-select" id="target-node">
+                                    <option value="" selected disabled>Select target</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Analyze</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div id="path-results" class="d-none">
+                        <h6>Path Quality Metrics</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Value</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>End-to-End Latency</td>
+                                        <td>85ms</td>
+                                        <td><span class="badge bg-warning">Moderate</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Packet Loss</td>
+                                        <td>0.5%</td>
+                                        <td><span class="badge bg-success">Good</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jitter</td>
+                                        <td>12ms</td>
+                                        <td><span class="badge bg-success">Good</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bottleneck Bandwidth</td>
+                                        <td>45 Mbps</td>
+                                        <td><span class="badge bg-warning">Moderate</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Hops</td>
+                                        <td>5</td>
+                                        <td><span class="badge bg-success">Good</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <h6 class="mt-3">Bottlenecks & Issues</h6>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            <strong>Bottleneck identified:</strong> Transport link TL003 is operating at 85% capacity, affecting overall throughput.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- D3.js for network visualization -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<!-- Network topology visualization script -->
+<script src="{{ url_for('static', filename='js/network-topology.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize network topology (main initialization is in network-topology.js)
+    
+    // Handle topology controls
+    const showLabelsCheckbox = document.getElementById('show-labels');
+    if (showLabelsCheckbox) {
+        showLabelsCheckbox.addEventListener('change', function() {
+            const topology = window.networkTopology;
+            if (topology) {
+                const nodeTexts = document.querySelectorAll('.node text');
+                nodeTexts.forEach(text => {
+                    text.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+        });
+    }
+    
+    // Handle domain filtering
+    const domainFilters = document.querySelectorAll('[data-domain]');
+    domainFilters.forEach(filter => {
+        filter.addEventListener('click', function(e) {
+            e.preventDefault();
+            const domain = this.dataset.domain;
+            const topology = window.networkTopology;
+            
+            if (topology) {
+                if (domain === 'all') {
+                    // Show all nodes and links
+                    topology.node.style('display', 'block');
+                    topology.link.style('display', 'block');
+                } else {
+                    // Filter nodes by domain
+                    topology.node.style('display', d => d.domain === domain ? 'block' : 'none');
+                    // Show links where both source and target are in the domain or one is in the domain
+                    topology.link.style('display', d => {
+                        const sourceVisible = d.source.domain === domain;
+                        const targetVisible = d.target.domain === domain;
+                        return (sourceVisible || targetVisible) ? 'block' : 'none';
+                    });
+                }
+            }
+        });
+    });
+    
+    // Handle refresh button
+    const refreshButton = document.getElementById('refresh-topology');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', function() {
+            const topology = window.networkTopology;
+            if (topology) {
+                topology.loadData();
+            }
+        });
+    }
+    
+    // Populate path analysis dropdowns
+    setTimeout(() => {
+        const topology = window.networkTopology;
+        if (topology) {
+            const sourceSelect = document.getElementById('source-node');
+            const targetSelect = document.getElementById('target-node');
+            
+            topology.node.each(d => {
+                // Create option for source
+                const sourceOption = document.createElement('option');
+                sourceOption.value = d.id;
+                sourceOption.textContent = d.name;
+                sourceSelect.appendChild(sourceOption);
+                
+                // Create option for target
+                const targetOption = document.createElement('option');
+                targetOption.value = d.id;
+                targetOption.textContent = d.name;
+                targetSelect.appendChild(targetOption);
+            });
+        }
+    }, 1000);
+    
+    // Handle path analysis form
+    const pathForm = document.getElementById('path-analysis-form');
+    if (pathForm) {
+        pathForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const sourceId = document.getElementById('source-node').value;
+            const targetId = document.getElementById('target-node').value;
+            
+            if (!sourceId || !targetId) {
+                alert('Please select both source and target nodes');
+                return;
+            }
+            
+            // Show results
+            document.getElementById('path-results').classList.remove('d-none');
+            
+            // Highlight path in visualization
+            const topology = window.networkTopology;
+            if (topology) {
+                // This is a simplified path; in a real app, you would calculate this
+                const path = {
+                    nodes: ['ct1', 'r1', 'sw1', 'r2', 'gw1']
+                };
+                topology.highlightPath(path);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

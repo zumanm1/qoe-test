@@ -1,0 +1,225 @@
+/* Main Styles for Mobile Network QoE Web Application */
+
+:root {
+    --mobile-yellow: #ffcb05;
+    --mobile-blue: #004f9f;
+    --mobile-light-blue: #0072ce;
+    --mobile-dark-blue: #00335b;
+    --ran-color: #3498db;
+    --transport-color: #2ecc71;
+    --core-color: #9b59b6;
+    --internet-color: #e67e22;
+}
+
+/* General Styles */
+body {
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.navbar-dark.bg-primary {
+    background-color: var(--mobile-blue) !important;
+}
+
+.btn-primary {
+    background-color: var(--mobile-blue);
+    border-color: var(--mobile-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--mobile-dark-blue);
+    border-color: var(--mobile-dark-blue);
+}
+
+.btn-outline-primary {
+    color: var(--mobile-blue);
+    border-color: var(--mobile-blue);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--mobile-blue);
+    border-color: var(--mobile-blue);
+}
+
+.bg-primary {
+    background-color: var(--mobile-blue) !important;
+}
+
+.text-primary {
+    color: var(--mobile-blue) !important;
+}
+
+/* Card styles */
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    font-weight: 500;
+}
+
+/* Dashboard specific styles */
+.dashboard-card {
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Simulation specific styles */
+.slider-container {
+    margin-bottom: 1.5rem;
+}
+
+.param-slider {
+    width: 100%;
+}
+
+.slider-value {
+    font-weight: bold;
+    min-width: 50px;
+    text-align: right;
+}
+
+.qoe-score-display {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.qoe-gauge {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    margin: 0 auto;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.qoe-gauge-bg {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    border: 10px solid #eee;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    box-sizing: border-box;
+    top: 50%;
+}
+
+.qoe-gauge-fill {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    background: conic-gradient(var(--mobile-blue) 0%, transparent 0%);
+    top: 50%;
+    transition: all 0.5s ease-out;
+}
+
+.qoe-gauge-center {
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    background: white;
+    border-radius: 100%;
+    top: 65%;
+    left: 15%;
+}
+
+/* Domain color indicators */
+.domain-ran {
+    color: var(--ran-color);
+}
+
+.domain-transport {
+    color: var(--transport-color);
+}
+
+.domain-core {
+    color: var(--core-color);
+}
+
+.domain-internet {
+    color: var(--internet-color);
+}
+
+.bg-domain-ran {
+    background-color: var(--ran-color);
+}
+
+.bg-domain-transport {
+    background-color: var(--transport-color);
+}
+
+.bg-domain-core {
+    background-color: var(--core-color);
+}
+
+.bg-domain-internet {
+    background-color: var(--internet-color);
+}
+
+/* Status indicators */
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.status-good {
+    background-color: #2ecc71;
+}
+
+.status-warning {
+    background-color: #f1c40f;
+}
+
+.status-critical {
+    background-color: #e74c3c;
+}
+
+.status-unknown {
+    background-color: #95a5a6;
+}
+
+/* Network topology styles */
+.network-topology {
+    width: 100%;
+    height: 600px;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.link {
+    stroke: #999;
+    stroke-opacity: 0.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .qoe-gauge {
+        width: 150px;
+        height: 75px;
+    }
+    
+    .qoe-gauge-bg, .qoe-gauge-fill {
+        width: 150px;
+        height: 150px;
+    }
+}

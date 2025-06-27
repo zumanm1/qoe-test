@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mt-4 mb-4">Network Performance Troubleshooting Guide</h1>
+    <p class="lead mb-5">A comprehensive analysis of the Mobile network architecture for troubleshooting poor Ookla speed test performance.</p>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-sitemap me-1"></i>
+                    Network Architecture & Call Flow
+                </div>
+                <div class="card-body">
+                    <!-- Legend -->
+                    <div class="network-legend">
+                        <div class="legend-item"><div class="legend-color-box" style="background-color: #d9534f;"></div> Radio Access Network</div>
+                        <div class="legend-item"><div class="legend-color-box" style="background-color: #f0ad4e;"></div> Transport Network</div>
+                        <div class="legend-item"><div class="legend-color-box" style="background-color: #5cb85c;"></div> Core Network</div>
+                        <div class="legend-item"><div class="legend-color-box" style="background-color: #C39BD3;"></div> Packet Core</div>
+                        <div class="legend-item"><div class="legend-color-box" style="background-color: #337ab7;"></div> Internet/Service</div>
+                    </div>
+
+                    <!-- Diagram -->
+                    <div class="network-flow-container" style="flex-wrap: wrap; justify-content: flex-start;">
+                        <div class="network-node node-ran"><div class="node-title">UE</div><div class="node-description">Mobile Device</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-ran"><div class="node-title">eNodeB</div><div class="node-description">RAN Base Station</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-transport"><div class="node-title">POC4 Router</div><div class="node-description">Point of Concentration</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-transport"><div class="node-title">POC3 Router</div><div class="node-description">Pre-aggregation</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-transport"><div class="node-title">POC2 Router</div><div class="node-description">Core Aggregation</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-core"><div class="node-title">POC1 ASBR</div><div class="node-description">AS Border Router</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-core"><div class="node-title">Core P</div><div class="node-description">Provider Router</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-core"><div class="node-title">Core PE2</div><div class="node-description">Provider Edge</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-packet-core"><div class="node-title">S-GW</div><div class="node-description">Serving Gateway</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-packet-core"><div class="node-title">P-GW</div><div class="node-description">PDN Gateway</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-internet"><div class="node-title">IGW</div><div class="node-description">Internet Gateway</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-internet"><div class="node-title">PE Router</div><div class="node-description">Provider Edge</div></div>
+                        <div class="flow-arrow">&rightarrow;</div>
+                        <div class="network-node node-internet"><div class="node-title">Ookla Server</div><div class="node-description">Speed Test Server</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-tasks me-1"></i>
+                    Critical KPIs by Layer
+                </div>
+                <div class="card-body">
+                    <h5>Radio Access Network (RAN):</h5>
+                    <ul>
+                        <li><strong>UE:</strong> Signal strength (RSRP/RSRQ), device capabilities</li>
+                        <li><strong>eNodeB:</strong> Cell throughput, PRB utilization, active users</li>
+                    </ul>
+                    <hr>
+                    <h5>Transport Network:</h5>
+                    <ul>
+                        <li><strong>POC4-POC2 Routers:</strong> Interface utilization, packet loss, latency, jitter</li>
+                        <li>Focus on bandwidth bottlenecks and congestion points</li>
+                    </ul>
+                    <hr>
+                    <h5>Core Network:</h5>
+                    <ul>
+                        <li><strong>ASBR/PE/P Routers:</strong> MPLS performance, routing efficiency, CPU/memory usage</li>
+                        <li><strong>BGP:</strong> Route processing and peering stability</li>
+                    </ul>
+                    <hr>
+                    <h5>Packet Core:</h5>
+                    <ul>
+                        <li><strong>S-GW:</strong> Bearer setup success, handover performance</li>
+                        <li><strong>P-GW:</strong> Policy enforcement, NAT performance, IP allocation</li>
+                    </ul>
+                    <hr>
+                    <h5>Internet Layer:</h5>
+                    <ul>
+                        <li><strong>IGW/PE:</strong> Internet peering quality, DNS resolution</li>
+                        <li><strong>Ookla Server:</strong> Response time, concurrent connections</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-cogs me-1"></i>
+                    End-to-End KPI Framework
+                </div>
+                <div class="card-body">
+                    <p>Monitor these critical metrics across the entire path:</p>
+                    <ol>
+                        <li><strong>Throughput</strong> (DL/UL speeds)</li>
+                        <li><strong>Latency</strong> (Round trip time)</li>
+                        <li><strong>Jitter</strong> (Delay variation)</li>
+                        <li><strong>Packet Loss</strong> (Loss percentage)</li>
+                        <li><strong>Availability</strong> (Service uptime)</li>
+                        <li><strong>Quality</strong> (Signal quality index)</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-search-location me-1"></i>
+                    Troubleshooting Methodology
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li>Start with radio layer analysis (signal quality, interference)</li>
+                        <li>Check transport network utilization and congestion</li>
+                        <li>Verify core network routing and MPLS performance</li>
+                        <li>Analyze packet core gateway performance</li>
+                        <li>Test internet connectivity and server response</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-sitemap me-1"></i>
+            EUTRAN Network Architecture & GTP Protocol Flow
+        </div>
+        <div class="card-body">
+            <p>This diagram illustrates the detailed architecture and protocol flows within the EUTRAN and Evolved Packet Core (EPC).</p>
+            <pre class="bg-light p-3 rounded"><code>
+Network Domain Architecture
+===========================
+
+RAN DOMAIN (EUTRAN)         BACKHAUL TRANSPORT          IP-MPLS CORE NETWORK        PACKET CORE (EPC)         Internet/IMS
+-------------------         ------------------          --------------------        -----------------         ------------
+UE --(LTE-Uu)--> eNodeB --(Fiber)--> POC4/3/2 Routers --(Fiber)--> ASBR/PE/P Routers --(S5/S8)--> S-GW/P-GW --(SGi)--> External Networks
+
+Key Interfaces & Protocols:
+---------------------------
+- LTE-Uu: Air Interface (UE <-> eNodeB)
+- S1-U:   User Plane (eNodeB <-> S-GW) | Protocol: GTP-U
+- S1-MME: Control Plane (eNodeB <-> MME) | Protocol: S1-AP
+- S11:    Control Plane (MME <-> S-GW) | Protocol: GTP-C v2
+- S5/S8:  Control & User Plane (S-GW <-> P-GW) | Protocol: GTP-C v2, GTP-U v1
+- SGi:    Reference Point (P-GW <-> Internet)
+
+GTP Tunnel Establishment & Data Flow:
+-------------------------------------
+1. UE Attach Request (UE -> eNodeB -> MME)
+2. MME sends Create Session Request to S-GW (S11).
+3. S-GW forwards request to P-GW (S5/S8).
+4. P-GW creates bearer context and assigns IP address.
+5. End-to-end GTP-U tunnel is established: UE <-> eNodeB <-> S-GW <-> P-GW.
+            </code></pre>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,203 @@
+/* Custom styles for network diagrams */
+.network-flow-container {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.network-node {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 160px;
+    height: 90px;
+    border-radius: 10px;
+    margin: 0 10px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #fff;
+    border: 2px solid #dee2e6;
+}
+
+.network-node .node-title {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.network-node .node-description {
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+/* Domain Colors */
+.node-ran { border-color: #d9534f; }
+.node-ran .node-title { color: #d9534f; }
+.node-transport { border-color: #f0ad4e; }
+.node-transport .node-title { color: #f0ad4e; }
+.node-core { border-color: #5cb85c; }
+.node-core .node-title { color: #5cb85c; }
+.node-packet-core { border-color: #C39BD3; }
+.node-packet-core .node-title { color: #C39BD3; }
+.node-internet { border-color: #337ab7; }
+.node-internet .node-title { color: #337ab7; }
+
+/* Protocol Segments */
+.protocol-segment {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    padding: 0 15px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.segment-gtp-uic { background-color: #28a745; }
+.segment-ip-mpls { background-color: #8E44AD; }
+.segment-ip { background-color: #f0ad4e; }
+
+.protocol-legend {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.protocol-legend-item {
+    display: flex;
+    align-items: center;
+    margin: 0 15px;
+    font-size: 0.8rem;
+}
+
+.protocol-legend-color-box {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    margin-right: 8px;
+}
+
+
+/* Simulation Page KPI Controls */
+.param-slider-container {
+    margin-bottom: 1rem;
+}
+
+.param-slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* QoE Gauge */
+.qoe-gauge-container {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+.qoe-gauge-arc {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 30px solid #e9ecef;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    transform: rotate(-45deg);
+    box-sizing: border-box;
+}
+
+.qoe-gauge-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 30px solid #007bff;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    transform: rotate(-45deg);
+    box-sizing: border-box;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 0% 50%); /* Default to 0% fill */
+    transition: transform 0.5s ease-in-out;
+}
+
+.qoe-gauge-text {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.qoe-gauge-label {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: -10px;
+}
+
+/* Results List */
+.results-list {
+    list-style: none;
+    padding: 0;
+}
+
+.results-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.results-list li:last-child {
+    border-bottom: none;
+}
+
+/* Legend */
+.network-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 15px;
+    font-size: 0.9rem;
+}
+
+.legend-color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 8px;
+}

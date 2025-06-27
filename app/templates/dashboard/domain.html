@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Mobile Network QoE Tool{% endblock %}
+
+{% block extra_css %}
+<style>
+    .element-card {
+        transition: transform 0.2s;
+    }
+    .element-card:hover {
+        transform: translateY(-5px);
+    }
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    .status-active { background-color: #2ecc71; }
+    .status-warning { background-color: #f1c40f; }
+    .status-error { background-color: #e74c3c; }
+    .status-inactive { background-color: #95a5a6; }
+    
+    .subdomain-section {
+        border-left: 4px solid #3498db;
+        padding-left: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .subdomain-title {
+        color: #2980b9;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Domain header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-network-wired me-2"></i>
+            {{ domain|upper }} Domain
+        </h2>
+        <div>
+            <span class="badge rounded-pill bg-{{ 'success' if domain_health > 80 else 'warning' if domain_health > 60 else 'danger' }} me-2">
+                Health: {{ domain_health }}%
+            </span>
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <!-- Domain description -->
+    {% if domain == 'transport' %}
+    <div class="alert alert-info mb-4">
+        <h5><i class="fas fa-info-circle me-2"></i>Transport Domain Information</h5>
+        <p>The TRANSPORT domain consists of two major subdomains:</p>
+        <ul>
+            <li><strong>TX_D (Transmission Domain)</strong>: Connects 2G, 3G, 4G and 5G VRF on PE edge routers towards core networks.</li>
+            <li><strong>CDN_D (Core Data Network Domain)</strong>: Provides L3VPN services to connect EPC, CS and PS core (4G, LTE and 5G CORE and all related services provisioning).</li>
+        </ul>
+        <p class="mb-0"><strong>Note</strong>: CDN_D refers to Core Data Network, not Content Delivery Network. It is the department responsible for IP-MPLS network services.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Subdomains (for transport) -->
+    {% if domain == 'transport' and elements|selectattr('subdomain', 'eq', 'TX_D')|list %}
+    <div class="subdomain-section mb-4">
+        <h3 class="subdomain-title"><i class="fas fa-broadcast-tower me-2"></i>TX_D - Transmission Domain</h3>
+        <div class="row">
+            {% for element in elements|selectattr('subdomain', 'eq', 'TX_D')|list %}
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="card element-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <span class="status-indicator status-{{ element.status }}"></span>
+                                {{ element.element_name }}
+                            </h5>
+                            <p class="card-text text-muted">{{ element.element_type }}</p>
+                            <p class="card-text small">{{ element.location or 'Location not specified' }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="#" class="btn btn-sm btn-outline-primary">Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <p>No elements in TX_D subdomain yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if domain == 'transport' and elements|selectattr('subdomain', 'eq', 'CDN_D')|list %}
+    <div class="subdomain-section mb-4">
+        <h3 class="subdomain-title"><i class="fas fa-project-diagram me-2"></i>CDN_D - Core Data Network Domain</h3>
+        <div class="row">
+            {% for element in elements|selectattr('subdomain', 'eq', 'CDN_D')|list %}
+                <div class="col-md-4 col-lg-3 mb-3">
+                    <div class="card element-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <span class="status-indicator status-{{ element.status }}"></span>
+                                {{ element.element_name }}
+                            </h5>
+                            <p class="card-text text-muted">{{ element.element_type }}</p>
+                            <p class="card-text small">{{ element.location or 'Location not specified' }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="#" class="btn btn-sm btn-outline-primary">Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <p>No elements in CDN_D subdomain yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Regular elements (non-transport or without subdomain) -->
+    {% if domain != 'transport' or elements|selectattr('subdomain', 'none')|list %}
+    <div class="row">
+        {% for element in elements if domain != 'transport' or not element.subdomain %}
+            <div class="col-md-4 col-lg-3 mb-3">
+                <div class="card element-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="status-indicator status-{{ element.status }}"></span>
+                            {{ element.element_name }}
+                        </h5>
+                        <p class="card-text text-muted">{{ element.element_type }}</p>
+                        <p class="card-text small">{{ element.location or 'Location not specified' }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="#" class="btn btn-sm btn-outline-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <p>No elements in this domain yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- KPI Definitions -->
+    {% if kpi_defs %}
+        <h3 class="mt-5 mb-3">Domain KPI Definitions</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>KPI Code</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Unit</th>
+                    <th>Thresholds</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kpi in kpi_defs %}
+                    <tr>
+                        <td><code>{{ kpi.kpi_code }}</code></td>
+                        <td>{{ kpi.name }}</td>
+                        <td>{{ kpi.description }}</td>
+                        <td>{{ kpi.unit or '-' }}</td>
+                        <td>
+                            <span class="badge bg-danger">Critical: {{ kpi.critical_threshold }}</span>
+                            <span class="badge bg-warning">Warning: {{ kpi.warning_threshold }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Domain view loaded for: {{ domain }}');
+        
+        // Set up socket.io event listeners for realtime updates
+        if (typeof io !== 'undefined') {
+            const socket = io();
+            
+            socket.on('element_status_update', function(data) {
+                if (data.domain === '{{ domain }}') {
+                    console.log('Element status update:', data);
+                    // Update the element card status
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

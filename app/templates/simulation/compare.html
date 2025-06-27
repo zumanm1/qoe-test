@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+
+{% block title %}Scenario Comparison - Mobile Network QoE Tool{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-exchange-alt me-2"></i>Scenario Comparison</h2>
+        <div>
+            <a href="{{ url_for('simulation.index') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Simulation
+            </a>
+        </div>
+    </div>
+
+    <!-- Scenario selection -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-white">
+            <h5 class="card-title mb-0">Select Scenarios to Compare</h5>
+        </div>
+        <div class="card-body">
+            <form id="comparison-form" class="row g-3">
+                <div class="col-md-5">
+                    <label for="scenario1" class="form-label">Scenario 1 (Baseline)</label>
+                    <select class="form-select" id="scenario1" name="scenario1" required>
+                        <option value="" selected disabled>Select a scenario</option>
+                        <!-- Options will be populated via JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="scenario2" class="form-label">Scenario 2</label>
+                    <select class="form-select" id="scenario2" name="scenario2" required>
+                        <option value="" selected disabled>Select a scenario</option>
+                        <!-- Options will be populated via JavaScript -->
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Compare</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comparison results -->
+    <div id="comparison-results" class="d-none">
+        <!-- QoE Score comparison -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">QoE Score Comparison</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="comparison-card text-center p-3 border rounded">
+                            <h6 class="scenario1-name">Scenario 1</h6>
+                            <div class="display-4 fw-bold scenario1-score">85</div>
+                            <p class="text-muted">QoE Score</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="comparison-difference text-center p-3">
+                            <h6>Difference</h6>
+                            <div class="display-4 fw-bold score-difference">+8</div>
+                            <div class="difference-arrow">
+                                <i class="fas fa-arrow-right fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="comparison-card text-center p-3 border rounded">
+                            <h6 class="scenario2-name">Scenario 2</h6>
+                            <div class="display-4 fw-bold scenario2-score">93</div>
+                            <p class="text-muted">QoE Score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parameter comparison -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Parameter Comparison</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th class="scenario1-name">Scenario 1</th>
+                                <th class="scenario2-name">Scenario 2</th>
+                                <th>Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody id="params-table">
+                            <!-- Will be populated via JavaScript -->
+                            <tr>
+                                <td>Download Speed</td>
+                                <td>10 Mbps</td>
+                                <td>25 Mbps</td>
+                                <td class="text-success">+15 Mbps</td>
+                            </tr>
+                            <tr>
+                                <td>Upload Speed</td>
+                                <td>5 Mbps</td>
+                                <td>10 Mbps</td>
+                                <td class="text-success">+5 Mbps</td>
+                            </tr>
+                            <tr>
+                                <td>Latency</td>
+                                <td>80 ms</td>
+                                <td>45 ms</td>
+                                <td class="text-success">-35 ms</td>
+                            </tr>
+                            <tr>
+                                <td>Packet Loss</td>
+                                <td>2.5%</td>
+                                <td>0.8%</td>
+                                <td class="text-success">-1.7%</td>
+                            </tr>
+                            <tr>
+                                <td>Signal Strength</td>
+                                <td>-75 dBm</td>
+                                <td>-60 dBm</td>
+                                <td class="text-success">+15 dBm</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain impact comparison -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Domain Impact Comparison</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="domainComparisonChart" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Improvement Recommendations</h5>
+            </div>
+            <div class="card-body">
+                <div id="recommendations-container">
+                    <!-- Will be populated via JavaScript -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb me-2"></i>RAN Optimization</h6>
+                        <p>Moving Cell B12 closer to high traffic areas could improve signal strength by up to 12dBm, resulting in better QoE.</p>
+                    </div>
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Transport Layer Enhancement</h6>
+                        <p>Upgrade transport link TL003 bandwidth from 1Gbps to 10Gbps to reduce congestion during peak hours.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No scenarios selected message -->
+    <div id="no-comparison-msg" class="text-center py-5">
+        <i class="fas fa-exchange-alt fa-4x mb-3 text-muted"></i>
+        <h4>Select scenarios to compare</h4>
+        <p class="text-muted">Choose two scenarios from your saved simulations to compare their QoE performance</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load saved scenarios
+    loadScenarioOptions();
+    
+    // Handle form submission
+    document.getElementById('comparison-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        compareScenarios();
+    });
+    
+    // Function to load scenario options
+    function loadScenarioOptions() {
+        // This would normally be an API call
+        const scenarios = [
+            { id: 1, name: 'Current Network Baseline', created_at: '2025-06-10', is_baseline: true },
+            { id: 2, name: 'RAN Optimization Plan', created_at: '2025-06-15', is_baseline: false },
+            { id: 3, name: 'Transport Upgrade Simulation', created_at: '2025-06-20', is_baseline: false },
+            { id: 4, name: 'Core Network Resilience Test', created_at: '2025-06-22', is_baseline: false },
+            { id: 5, name: 'Urban Coverage Enhancement', created_at: '2025-06-24', is_baseline: false }
+        ];
+        
+        // Populate scenario dropdowns
+        const scenario1Select = document.getElementById('scenario1');
+        const scenario2Select = document.getElementById('scenario2');
+        
+        scenarios.forEach(scenario => {
+            // Create option elements
+            const option1 = document.createElement('option');
+            option1.value = scenario.id;
+            option1.textContent = scenario.name + (scenario.is_baseline ? ' (Baseline)' : '');
+            if (scenario.is_baseline) option1.selected = true;
+            
+            const option2 = document.createElement('option');
+            option2.value = scenario.id;
+            option2.textContent = scenario.name + (scenario.is_baseline ? ' (Baseline)' : '');
+            
+            // Append to selects
+            scenario1Select.appendChild(option1);
+            scenario2Select.appendChild(option2);
+        });
+        
+        // Select a different default for scenario 2
+        if (scenario2Select.options.length > 2) {
+            scenario2Select.selectedIndex = 2;
+        }
+    }
+    
+    // Function to compare scenarios
+    function compareScenarios() {
+        // Get selected scenarios
+        const scenario1Id = document.getElementById('scenario1').value;
+        const scenario2Id = document.getElementById('scenario2').value;
+        
+        if (!scenario1Id || !scenario2Id) {
+            alert('Please select two scenarios to compare');
+            return;
+        }
+        
+        // In a real app, this would be an API call
+        // For now, we'll use mock data
+        
+        // Hide initial message, show comparison
+        document.getElementById('no-comparison-msg').classList.add('d-none');
+        document.getElementById('comparison-results').classList.remove('d-none');
+        
+        // Update scenario names throughout the UI
+        const scenario1Name = document.getElementById('scenario1').options[document.getElementById('scenario1').selectedIndex].text;
+        const scenario2Name = document.getElementById('scenario2').options[document.getElementById('scenario2').selectedIndex].text;
+        
+        document.querySelectorAll('.scenario1-name').forEach(el => {
+            el.textContent = scenario1Name;
+        });
+        
+        document.querySelectorAll('.scenario2-name').forEach(el => {
+            el.textContent = scenario2Name;
+        });
+        
+        // Draw comparison chart
+        drawDomainComparisonChart(scenario1Name, scenario2Name);
+    }
+    
+    // Function to draw domain comparison chart
+    function drawDomainComparisonChart(scenario1Name, scenario2Name) {
+        const ctx = document.getElementById('domainComparisonChart').getContext('2d');
+        
+        // Mock data - in a real app, this would come from API
+        const chartData = {
+            labels: ['RAN', 'Transport', 'Core', 'Internet'],
+            datasets: [
+                {
+                    label: scenario1Name,
+                    data: [75, 82, 88, 78],
+                    backgroundColor: 'rgba(52, 152, 219, 0.5)',
+                    borderColor: 'rgb(52, 152, 219)',
+                    borderWidth: 1
+                },
+                {
+                    label: scenario2Name,
+                    data: [85, 88, 90, 82],
+                    backgroundColor: 'rgba(46, 204, 113, 0.5)',
+                    borderColor: 'rgb(46, 204, 113)',
+                    borderWidth: 1
+                }
+            ]
+        };
+        
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Domain Health Score (%)'
+                    }
+                }
+            }
+        };
+        
+        // Check if there's an existing chart and destroy it
+        if (window.domainComparisonChart) {
+            window.domainComparisonChart.destroy();
+        }
+        
+        // Create new chart
+        window.domainComparisonChart = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: chartOptions
+        });
+    }
+});
+</script>
+{% endblock %}
