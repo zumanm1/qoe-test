@@ -65,6 +65,10 @@ def create_app(config_name='default'):
     # Register context processors
     from app.context_processors import inject_current_year
     app.context_processor(inject_current_year)
+
+    # Register CLI commands
+    from app.cli import register_commands
+    register_commands(app)
     
     return app
 
