@@ -20,25 +20,28 @@ class Colors:
     RED = '\033[0;31m'
     NC = '\033[0m'  # No Color
 
-def run_command(command, description):
-    """Runs a shell command and handles errors."""
+def run_command(command, description, env=None):
+    """Runs a shell command with a custom environment and handles errors."""
+    # Combine the current environment with the provided one
+    cmd_env = os.environ.copy()
+    if env:
+        cmd_env.update(env)
+
     try:
         # Use shell=True for Windows compatibility with commands like 'flask'
-        # On Unix, the command is passed as a list to avoid shell injection
         is_windows = sys.platform == "win32"
-        subprocess.run(command, check=True, shell=is_windows, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(command, check=True, shell=is_windows, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=cmd_env)
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
         print(f"{Colors.RED}Error during: {description}{Colors.NC}")
         print(f"{Colors.RED}Command failed: {' '.join(command)}{Colors.NC}")
-        # Decode stderr if it exists, otherwise provide a generic error
         stderr = e.stderr.decode('utf-8').strip() if hasattr(e, 'stderr') and e.stderr else 'Command not found or execution failed.'
         print(f"{Colors.RED}{stderr}{Colors.NC}")
         sys.exit(1)
 
 def main():
     """Main function to orchestrate the startup process."""
-    # Use 'python3' or 'python' depending on the OS
     python_executable = 'python3' if sys.platform != 'win32' else 'python'
+    flask_env = {'FLASK_APP': 'run.py'}
 
     # --- Step 1: Check for and install dependencies ---
     print(f"{Colors.YELLOW}Step 1: Checking and installing dependencies...{Colors.NC}")
@@ -49,15 +52,15 @@ def main():
     print(f"{Colors.YELLOW}Step 2: Setting up the database...{Colors.NC}")
     if not os.path.isdir('migrations'):
         print("Migrations directory not found. Initializing database...")
-        run_command(['flask', 'db', 'init'], 'Database Initialization')
-        run_command(['flask', 'db', 'migrate', '-m', 'Initial database setup'], 'Initial Migration')
+        run_command(['flask', 'db', 'init'], 'Database Initialization', env=flask_env)
+        run_command(['flask', 'db', 'migrate', '-m', 'Initial database setup'], 'Initial Migration', env=flask_env)
     
-    run_command(['flask', 'db', 'upgrade'], 'Database Migration')
+    run_command(['flask', 'db', 'upgrade'], 'Database Migration', env=flask_env)
     print(f"{Colors.GREEN}Database is up to date.{Colors.NC}\n")
 
     # --- Step 3: Seed database and ensure admin user exists ---
     print(f"{Colors.YELLOW}Step 3: Seeding data and ensuring default admin user exists...{Colors.NC}")
-    run_command(['flask', 'setup-all'], 'Data Seeding')
+    run_command(['flask', 'setup-all'], 'Data Seeding', env=flask_env)
     print(f"{Colors.GREEN}Initial data is in place.{Colors.NC}\n")
 
     # --- Step 4: Start the application ---
@@ -66,9 +69,10 @@ def main():
     print("Press CTRL+C to stop the server.")
     
     try:
-        # Use subprocess.call to run flask and wait for it to complete
+        cmd_env = os.environ.copy()
+        cmd_env.update(flask_env)
         is_windows = sys.platform == "win32"
-        subprocess.call(['flask', 'run'], shell=is_windows)
+        subprocess.call(['flask', 'run'], shell=is_windows, env=cmd_env)
     except KeyboardInterrupt:
         print(f"\n{Colors.YELLOW}Server stopped.{Colors.NC}")
         sys.exit(0)
