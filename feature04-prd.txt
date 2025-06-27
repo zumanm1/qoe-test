@@ -1,7 +1,7 @@
 # Product Requirements Document: Feature04 - QoE Impact & Technical Deep Dive
 
 ## 1. Overview
-This feature introduces two new pages to the MTN QoE Tool:
+This feature introduces two new pages to the Mobile QoE Tool:
 - **QoE Impact Dashboard:** An interactive dashboard for real-time network performance monitoring and optimization.
 - **Technical Deep Dive:** A detailed reference page covering EUTRAN network architecture, protocols, and KPIs.
 

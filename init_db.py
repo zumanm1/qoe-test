@@ -1,5 +1,5 @@
 """
-Database initialization script for MTN QoE Tool
+Database initialization script for Mobile QoE Tool
 Creates the database tables and adds an admin user
 """
 from app import create_app, db
@@ -21,7 +21,7 @@ with app.app_context():
         # Create admin user
         admin = User(
             username='admin',
-            email='admin@mtn.com',
+            email='admin@Mobile.com',
             password_hash=generate_password_hash('admin123'),
             role='admin',
             created_at=datetime.utcnow()

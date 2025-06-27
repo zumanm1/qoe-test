@@ -1,7 +1,7 @@
-# MTN Network QoE Web Application - Progress Tracker
+# Mobile Network QoE Web Application - Progress Tracker
 
 ## Project Overview
-- **Project Name**: MTN Network QoE Web Application
+- **Project Name**: Mobile Network QoE Web Application
 - **Current Phase**: Phase 1 (MVP)
 - **Start Date**: TBD
 - **Target Completion Date**: TBD

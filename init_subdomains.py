@@ -1,5 +1,5 @@
 """
-Initialize subdomains for MTN QoE Tool
+Initialize subdomains for Mobile QoE Tool
 This script adds TX_D and CDN_D subdomains to the TRANSPORT domain
 """
 from app import create_app, db

@@ -1,15 +1,15 @@
-# MTN Network QoE Web Application - Product Requirements Document (PRD)
+# Mobile Network QoE Web Application - Product Requirements Document (PRD)
 
 ## 1. Introduction
 
 ### 1.1 Product Vision
-To create a unified, intelligent web platform that empowers MTN's network engineering and operations teams to proactively monitor, analyze, and optimize network Quality of Experience (QoE) in real-time. This application will transform network management from a reactive, siloed process into a proactive, data-driven, and holistic discipline.
+To create a unified, intelligent web platform that empowers Mobile's network engineering and operations teams to proactively monitor, analyze, and optimize network Quality of Experience (QoE) in real-time. This application will transform network management from a reactive, siloed process into a proactive, data-driven, and holistic discipline.
 
 ### 1.2 Problem Statement
 Diagnosing the root cause of poor network performance (e.g., slow speed tests) is a complex and time-consuming task. Data is fragmented across multiple systems and network domains (RAN, Transport, Core), making end-to-end visibility difficult. Engineers lack the tools to simulate the impact of configuration changes, leading to a trial-and-error approach to optimization. This results in extended Mean Time To Resolution (MTTR) and a degraded subscriber experience.
 
 ### 1.3 Proposed Solution
-The MTN Network QoE Web Application is a comprehensive platform that provides:
+The Mobile Network QoE Web Application is a comprehensive platform that provides:
 - Centralized, real-time monitoring across all network layers
 - An interactive simulation engine to model network changes and predict QoE impact
 - Automated diagnostics and optimization recommendations to guide engineers

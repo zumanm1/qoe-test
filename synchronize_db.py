@@ -11,7 +11,7 @@ import sys
 from datetime import datetime
 
 # Database path
-DB_PATH = 'mtn_qoe.db'
+DB_PATH = 'Mobile_qoe.db'
 
 def main():
     print(f"Starting database synchronization for Mobile QoE Tool...")

@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 
 # Get the absolute path to the database file
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mtn_qoe.db')
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Mobile_qoe.db')
 
 def main():
     print(f"Fixing subdomain column in database: {DB_PATH}")

@@ -1,5 +1,5 @@
 """
-Complete database initialization script for MTN QoE Tool
+Complete database initialization script for Mobile QoE Tool
 - Creates ALL database tables including network_elements with subdomain support
 - Adds an admin user
 - Sets up TX_D and CDN_D subdomains in the TRANSPORT domain
@@ -36,7 +36,7 @@ with app.app_context():
         # Create admin user
         admin = User(
             username='admin',
-            email='admin@mtn.com',
+            email='admin@Mobile.com',
             password_hash=generate_password_hash('Admin123!'),
             role='admin',
             created_at=datetime.utcnow()

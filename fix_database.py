@@ -6,7 +6,7 @@ import os
 
 def fix_database():
     # Database path
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mtn_qoe.db')
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Mobile_qoe.db')
     
     if not os.path.exists(db_path):
         print(f"Database file not found at: {db_path}")

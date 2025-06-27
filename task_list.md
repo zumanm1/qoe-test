@@ -1,4 +1,4 @@
-# MTN Network QoE Web Application - Task List
+# Mobile Network QoE Web Application - Task List
 
 ## Priority Levels
 - **P0**: Critical - Must be completed first, blocks other tasks

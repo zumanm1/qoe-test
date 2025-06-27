@@ -1,5 +1,5 @@
 """
-Reset admin password script for MTN QoE Tool
+Reset admin password script for Mobile QoE Tool
 """
 from app import create_app, db
 from app.models.user import User
@@ -21,7 +21,7 @@ with app.app_context():
         # Create admin if it doesn't exist
         admin = User(
             username='admin',
-            email='admin@mtn.com',
+            email='admin@Mobile.com',
             password_hash=generate_password_hash('Admin123!'),
             role='admin'
         )

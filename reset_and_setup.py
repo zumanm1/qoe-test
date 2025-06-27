@@ -1,5 +1,5 @@
 """
-Complete reset and setup script for MTN QoE Tool
+Complete reset and setup script for Mobile QoE Tool
 - Removes existing database
 - Creates new database with proper schema including subdomain support
 - Sets up admin user
@@ -20,7 +20,7 @@ app = create_app('development')
 
 def reset_database():
     """Remove the existing database file"""
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mtn_qoe.db')
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Mobile_qoe.db')
     if os.path.exists(db_path):
         try:
             os.remove(db_path)
@@ -44,7 +44,7 @@ def create_admin_user():
         if admin is None:
             admin = User(
                 username='admin',
-                email='admin@mtn.com',
+                email='admin@Mobile.com',
                 password_hash=generate_password_hash('Admin123!'),
                 role='admin',
                 created_at=datetime.utcnow()
@@ -86,7 +86,7 @@ def add_sample_network_elements():
     """Add sample network elements for TX_D and CDN_D subdomains"""
     with app.app_context():
         # Direct database access to avoid ORM issues
-        conn = sqlite3.connect('mtn_qoe.db')
+        conn = sqlite3.connect('Mobile_qoe.db')
         cursor = conn.cursor()
         
         # TX_D elements
@@ -125,7 +125,7 @@ def add_sample_network_elements():
 
 def main():
     """Main function to run all setup steps"""
-    print("Starting MTN QoE Tool complete setup...")
+    print("Starting Mobile QoE Tool complete setup...")
     
     if not reset_database():
         print("Failed to reset database. Exiting.")
@@ -147,7 +147,7 @@ def main():
         print("Failed to add sample network elements. Exiting.")
         return False
     
-    print("MTN QoE Tool setup completed successfully!")
+    print("Mobile QoE Tool setup completed successfully!")
     return True
 
 if __name__ == "__main__":

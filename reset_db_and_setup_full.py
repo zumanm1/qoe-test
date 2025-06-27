@@ -1,5 +1,5 @@
 """
-Complete database reset and setup for MTN QoE Tool
+Complete database reset and setup for Mobile QoE Tool
 - Creates fresh database
 - Sets up all tables with proper schema
 - Creates admin user
@@ -11,7 +11,7 @@ import sqlite3
 from werkzeug.security import generate_password_hash
 
 # --- Configuration ---
-DB_FILE = os.path.join(os.path.dirname(__file__), 'mtn_qoe.db')
+DB_FILE = os.path.join(os.path.dirname(__file__), 'Mobile_qoe.db')
 ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'Admin123!'
 ADMIN_EMAIL = 'admin@example.com'

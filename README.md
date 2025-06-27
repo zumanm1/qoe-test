@@ -1,6 +1,6 @@
-# MTN Network QoE Tool
+# Mobile QoE Tool
 
-A comprehensive web application for monitoring and simulating network Quality of Experience (QoE) for MTN.
+A comprehensive web application for monitoring and simulating network Quality of Experience (QoE).
 
 ## Features
 
@@ -138,4 +138,4 @@ pytest
 
 ## License
 
-© MTN Group, All Rights Reserved
+© Mobile Group, All Rights Reserved

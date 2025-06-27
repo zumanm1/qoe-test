@@ -1,0 +1,27 @@
+{
+  "name": "qoe-tool",
+  "version": "1.0.0",
+  "description": "A comprehensive web application for monitoring and simulating network Quality of Experience (QoE).",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:single": "jest --testPathPattern="
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zumanm1/qoe-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zumanm1/qoe-test/issues"
+  },
+  "homepage": "https://github.com/zumanm1/qoe-test#readme",
+  "dependencies": {
+    "puppeteer": "^24.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

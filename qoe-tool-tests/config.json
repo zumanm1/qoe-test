@@ -1,0 +1,7 @@
+{
+  "baseUrl": "http://127.0.0.1:5000",
+  "screenshotsDir": "mcp-reports/screens",
+  "saveScreens": true,
+  "headless": true,
+  "viewport": { "width": 1920, "height": 1080 }
+}

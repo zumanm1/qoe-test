@@ -8,7 +8,7 @@ from datetime import datetime
 
 def main():
     # Connect to database (will create if doesn't exist)
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mtn_qoe.db')
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Mobile_qoe.db')
     print(f"Using database at: {db_path}")
     
     # Create database connection
