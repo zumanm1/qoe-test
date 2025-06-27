@@ -46,6 +46,7 @@ def create_app(config_name='default'):
     from app.views.simulation import simulation_bp
     from app.views.reports import reports_bp
     from app.views.main import main_bp
+    from app.views.docs import docs_bp
     from app.views.api import api_bp
     
     app.register_blueprint(main_bp)
@@ -55,6 +56,7 @@ def create_app(config_name='default'):
     app.register_blueprint(simulation_bp, url_prefix='/simulation')
     app.register_blueprint(reports_bp, url_prefix='/reports')
     app.register_blueprint(troubleshooting_bp, url_prefix='/troubleshooting')
+    app.register_blueprint(docs_bp, url_prefix='/docs')
     
     # Register error handlers
     from app.errors import register_error_handlers

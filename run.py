@@ -17,12 +17,13 @@ register_commands(app)
 @app.shell_context_processor
 def make_shell_context():
     return {
-        'db': db, 
-        'User': User, 
+        'db': db,
+        'User': User,
         'NetworkElement': NetworkElement,
         'KPIDefinition': KPIDefinition,
         'SimulationScenario': SimulationScenario
     }
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0')
+    # Use socketio.run() to support WebSockets and enable debug mode for development
+    socketio.run(app, debug=True)
