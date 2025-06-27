@@ -38,13 +38,13 @@ def main():
         'migrations',
         'instance',
         'Mobile_qoe.db',
-        'mtn_qoe.db',
+        'mobile_qoe.db',
         'app.db' # Just in case
     ]
 
     # Also find any other .db files and backups
     for item in os.listdir(project_root):
-        if item.endswith('.db') or item.startswith('mtn_qoe.db.backup'):
+        if item.endswith('.db') or item.startswith('mobile_qoe.db.backup'):
             if item not in artifacts_to_delete:
                 artifacts_to_delete.append(item)
 
