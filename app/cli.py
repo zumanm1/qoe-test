@@ -44,9 +44,7 @@ def register_commands(app):
         """Set up everything: Initialize DB, run migrations, seed data, create admin."""
         click.echo('Setting up Mobile Network QoE Tool...')
         
-        # Initialize database
-        click.echo('\nInitializing database...')
-        db.create_all()
+
         
         # Create admin user
         click.echo('\nCreating admin user...')
