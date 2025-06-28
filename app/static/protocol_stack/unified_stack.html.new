@@ -1,0 +1,202 @@
+<!-- P-GW (PDN Gateway) -->
+            <div class="network-node">
+                <div class="interface-label">SGi</div>
+                <div class="node-title">P-GW</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified app-layer" style="animation-delay: 0.1s">
+                        GTP-C Control
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.2s">
+                        GTP-UIC
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.3s">
+                        UDP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.4s">
+                        IP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.5s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.6s">
+                        Fiber/Copper
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+
+            <!-- INS PE1 Router (Provider Edge 1) -->
+            <div class="network-node">
+                <div class="interface-label">MPLS Edge</div>
+                <div class="node-title">INS PE1</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.1s">
+                        TCP/UDP (Control + Data)
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.2s">
+                        IP → MPLS Encapsulation
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        MPLS Labels
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Fiber Backbone
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+            
+            <!-- INS P0 Router (Provider) -->
+            <div class="network-node">
+                <div class="interface-label">MPLS Core</div>
+                <div class="node-title">INS P0</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.1s">
+                        Pure MPLS Switching
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.2s">
+                        MPLS Label Swap
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        No IP Lookup
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Fiber Backbone
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connection-arrow">⟶</div>
+            
+            <!-- INS PE2 Router (Provider Edge 2) -->
+            <div class="network-node">
+                <div class="interface-label">MPLS Edge</div>
+                <div class="node-title">INS PE2</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.1s">
+                        TCP/UDP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.2s">
+                        MPLS → IP Decapsulation
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        IP Routing
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Fiber/Copper
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connection-arrow">⟶</div>
+            
+            <!-- Ookla Server -->
+            <div class="network-node">
+                <div class="interface-label">Internet</div>
+                <div class="node-title">Ookla</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified app-layer" style="animation-delay: 0.1s">
+                        Speedtest Service
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.2s">
+                        TCP/HTTP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        IP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Data Center Connectivity
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MPLS Architecture Visual Explanation -->
+        <div class="unified-diagram" style="margin-top: 50px;">
+            <div class="network-node" style="flex: 2;">
+                <div class="node-title">MPLS Node Architecture</div>
+                <div class="protocol-stack-unified">
+                    <div class="mpls-transport" style="animation-delay: 0.1s">
+                        <div class="mpls-box">IP Packet</div>
+                        <div class="mpls-arrow">→</div>
+                        <div class="mpls-box">+MPLS Label at PE1</div>
+                        <div class="mpls-arrow">→</div>
+                        <div class="mpls-box">Switch Label at P0</div>
+                        <div class="mpls-arrow">→</div>
+                        <div class="mpls-box">-MPLS Label at PE2</div>
+                        <div class="mpls-arrow">→</div>
+                        <div class="mpls-box">IP Packet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend-unified">
+            <div class="legend-section">
+                <div class="legend-title">MPLS Network Structure</div>
+                <div class="legend-item"><strong>Provider Edge Router (PE):</strong> Sits at the boundary of the MPLS network, performing label imposition (ingress) or disposition (egress).</div>
+                <div class="legend-item"><strong>Provider Router (P):</strong> Core MPLS router that performs label switching without IP lookup, providing high-speed forwarding.</div>
+                <div class="legend-item"><strong>Label Switching Path (LSP):</strong> The route through an MPLS network followed by packets assigned the same label.</div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-title">Protocol Layers</div>
+                <div class="legend-item"><strong>Application:</strong> End-user services like Speedtest, web browsing, streaming</div>
+                <div class="legend-item"><strong>Transport:</strong> TCP/UDP for end-to-end connections, GTP for tunneling</div>
+                <div class="legend-item"><strong>Network:</strong> IP routing and addressing, MPLS label switching</div>
+                <div class="legend-item"><strong>Data Link:</strong> Ethernet framing and addressing</div>
+                <div class="legend-item"><strong>Physical:</strong> Fiber optics, copper, radio waves</div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-title">MPLS Backbones</div>
+                <div class="legend-item"><strong>MPLS Backbone:</strong> High-speed core network using label switching for efficient and deterministic routing.</div>
+                <div class="legend-item"><strong>EPC Backbone:</strong> Mobile core network connecting S-GW, P-GW and other elements.</div>
+                <div class="legend-item"><strong>ISP Backbone:</strong> Internet Service Provider's core network (INS PE1, P0, PE2).</div>
+                <div class="legend-item"><strong>Internet Backbone:</strong> Global network connecting ISPs to content providers like Ookla.</div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-title">Key Protocols</div>
+                <div class="legend-item"><strong>GTP-UIC:</strong> GTP User, Control and Interface management protocol between S-GW and P-GW.</div>
+                <div class="legend-item"><strong>GTP-U:</strong> GPRS Tunneling Protocol for User plane data.</div>
+                <div class="legend-item"><strong>GTP-C:</strong> GPRS Tunneling Protocol for Control plane signaling.</div>
+                <div class="legend-item"><strong>PDCP/RLC/MAC:</strong> Radio interface protocols for efficient data transmission over LTE.</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Animation control - add delay for each protocol stack based on node position
+        document.addEventListener('DOMContentLoaded', function() {
+            const nodes = document.querySelectorAll('.network-node');
+            
+            nodes.forEach((node, index) => {
+                const layers = node.querySelectorAll('.protocol-layer-unified');
+                
+                layers.forEach((layer, layerIndex) => {
+                    // Create a sequential delay for each layer in each node
+                    const nodeDelay = index * 0.1;
+                    const existingDelay = parseFloat(layer.style.animationDelay || '0s');
+                    layer.style.animationDelay = (existingDelay + nodeDelay) + 's';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

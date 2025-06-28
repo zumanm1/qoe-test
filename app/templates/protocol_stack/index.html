@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Unified LTE to Ookla Protocol Stack - Mobile Network QoE Tool{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-network-wired me-2"></i>Unified LTE to Ookla Protocol Stack Architecture</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Complete Protocol Stack Visualization</h6>
+        </div>
+        <div class="card-body">
+            <iframe id="protocol-frame" style="width:100%; height:800px; border:none;" src="{{ url_for('static', filename='protocol_stack/unified_stack.html') }}"></iframe>
+            <div class="mt-3 text-muted">
+                <i class="fas fa-info-circle"></i> Scroll horizontally to see the complete protocol stack from UE to Ookla Server.
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Key Updates in MPLS Architecture</h6>
+        </div>
+        <div class="card-body">
+            <h5>Perfect! All MPLS network nodes now show the proper architecture with 3-node structure.</h5>
+            <div class="mt-4">
+                <h6 class="font-weight-bold">Key Updates Made:</h6>
+                <ul class="mb-4">
+                    <li class="mb-2">
+                        <strong>MPLS Node Architecture</strong>: All MPLS networks now show:
+                        <ul>
+                            <li><strong>Node Title</strong>: PE1 → P → PE2</li>
+                            <li><strong>Top Layer</strong>: Visual representation showing PE1 → P → PE2 flow</li>
+                            <li><strong>Protocol Layer</strong>: IP → MPLS → MPLS → MPLS → IP path description</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <strong>MPLS Network Structure</strong>:
+                        <ul>
+                            <li><strong>PE1 (Provider Edge 1)</strong>: Ingress router - converts IP to MPLS labels</li>
+                            <li><strong>P (Provider Router)</strong>: Core MPLS router - performs label switching</li>
+                            <li><strong>PE2 (Provider Edge 2)</strong>: Egress router - converts MPLS labels back to IP</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <strong>Four MPLS Networks Enhanced</strong>:
+                        <ol>
+                            <li><strong>MPLS Backbone</strong> (eNodeB ↔ S-GW): PE1 → P → PE2</li>
+                            <li><strong>EPC Backbone</strong> (S-GW ↔ P-GW): PE1 → P → PE2</li>  
+                            <li><strong>ISP Backbone</strong> (P-GW ↔ T-IGW): PE1 → P → PE2</li>
+                            <li><strong>Internet Backbone</strong> (T-IGW ↔ Ookla): PE1 → P → PE2</li>
+                        </ol>
+                    </li>
+                </ul>
+                
+                <h6 class="font-weight-bold">MPLS Architecture Legend:</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Component</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>PE1</strong></td>
+                                <td>Provider Edge 1 (Ingress Router)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>P</strong></td>
+                                <td>Provider Router (Core MPLS)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PE2</strong></td>
+                                <td>Provider Edge 2 (Egress Router)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Label Path</strong></td>
+                                <td>IP→MPLS→MPLS→MPLS→IP</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LSP</strong></td>
+                                <td>Label Switched Path</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p class="mt-4">
+                    This accurately represents real-world MPLS architecture where each MPLS network consists of Provider Edge routers at the boundaries (PE1, PE2) that interface with customer equipment, and Provider routers (P) in the core that perform high-speed label switching without examining the IP headers.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Adjust iframe height based on content
+        function adjustIframeHeight() {
+            let iframe = document.getElementById('protocol-frame');
+            if (iframe) {
+                iframe.style.height = '700px'; // Default height
+                
+                // Try to adjust height based on content after loading
+                iframe.onload = function() {
+                    try {
+                        let frameContent = iframe.contentDocument || iframe.contentWindow.document;
+                        let height = frameContent.body.scrollHeight;
+                        iframe.style.height = (height + 50) + 'px';
+                    } catch(e) {
+                        console.log("Cannot access iframe content");
+                    }
+                };
+            }
+        }
+        
+        // Call the function
+        adjustIframeHeight();
+    });
+</script>
+{% endblock %}

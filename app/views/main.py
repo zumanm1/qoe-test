@@ -14,6 +14,11 @@ def home():
     """Redirect to index."""
     return redirect(url_for('main.index'))
 
+@main_bp.route('/protocol_stack')
+def protocol_stack():
+    """Serve the protocol stack visualization page."""
+    return render_template('protocol_stack/index.html')
+
 @main_bp.route('/health')
 def health_check():
     """Health check endpoint for load balancers and monitoring."""

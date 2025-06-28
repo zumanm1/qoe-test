@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified LTE to Ookla Protocol Stack</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden; /* Hide horizontal scrolling on body */
+        }
+
+        .container {
+            width: 98%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .unified-diagram {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: stretch;
+            gap: 15px;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            min-width: 2800px; /* Wide enough for all nodes from UE to Ookla */
+        }
+
+        .network-node {
+            flex: 0 0 auto;
+            width: 220px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 3px solid transparent;
+            margin-right: 5px;
+        }
+
+        .network-node:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        .node-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .protocol-stack-unified {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .protocol-layer-unified {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            min-height: 45px;
+        }
+
+        .protocol-layer-unified:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .protocol-layer-unified.app-layer {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+        }
+
+        .protocol-layer-unified.transport-layer {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+        }
+
+        .protocol-layer-unified.network-layer {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .protocol-layer-unified.data-layer {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+        }
+
+        .protocol-layer-unified.physical-layer {
+            background: linear-gradient(135deg, #636e72, #2d3436);
+        }
+        
+        .mpls-transport {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 8px;
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            border-radius: 8px;
+            margin: 4px 0;
+        }
+
+        .mpls-box {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3436;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .mpls-arrow {
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            animation: moveArrow 1.5s ease-in-out infinite;
+        }
+
+        .connection-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            animation: moveArrow 1.5s infinite;
+            flex: 0 0 auto;
+            width: 50px;
+            padding: 0 5px;
+        }
+
+        .interface-label {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .legend-unified {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .legend-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .legend-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .legend-item {
+            margin: 8px 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .data-flow-indicator {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #667eea, #fd79a8, #00b894, transparent);
+            animation: dataFlow 4s ease-in-out infinite;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes moveArrow {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(3px); }
+        }
+
+        @keyframes flowRight {
+            0%, 100% { 
+                transform: translateX(0px);
+                color: #667eea;
+            }
+            50% { 
+                transform: translateX(8px);
+                color: #fd79a8;
+            }
+        }
+        
+        @keyframes dataFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                width: 98%;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .network-node {
+                width: 200px;
+            }
+            
+            .connection-arrow {
+                width: 30px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="data-flow-indicator"></div>
+    
+    <div class="container">
+        <h1>Unified LTE to Ookla Server Protocol Stack Architecture</h1>
+        
+        <div class="scroll-container">
+            <div class="unified-diagram">
+            <!-- UE (User Equipment) -->
+            <div class="network-node">
+                <div class="interface-label">Radio</div>
+                <div class="node-title">UE</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified app-layer" style="animation-delay: 0.1s">
+                        Speedtest Application
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.2s">
+                        TCP/HTTP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        IP
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.4s">
+                        PDCP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.5s">
+                        RLC
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.6s">
+                        MAC
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.7s">
+                        LTE PHY
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+
+            <!-- eNodeB -->
+            <div class="network-node">
+                <div class="interface-label">S1-U</div>
+                <div class="node-title">eNodeB</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified app-layer" style="animation-delay: 0.1s">
+                        S1-AP
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.2s">
+                        SCTP / GTP-U
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.3s">
+                        UDP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.4s">
+                        IP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.5s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.6s">
+                        Fiber/Copper
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+
+            <!-- MPLS Transport Network (eNodeB to S-GW) -->
+            <div class="network-node">
+                <div class="interface-label">MPLS Backbone</div>
+                <div class="node-title">PE1 → P → PE2</div>
+                <div class="protocol-stack-unified">
+                    <div class="mpls-transport" style="animation-delay: 0.1s">
+                        <div class="mpls-box">PE1</div>
+                        <div class="mpls-arrow">→</div>
+                        <div class="mpls-box">P</div>
+                        <div class="mpls-arrow">→</div>
+                        <div class="mpls-box">PE2</div>
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.2s">
+                        IP → MPLS → MPLS → MPLS → IP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.3s">
+                        MPLS Label Switching
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Fiber Backbone
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+
+            <!-- S-GW (Serving Gateway) -->
+            <div class="network-node">
+                <div class="interface-label">S5/S8</div>
+                <div class="node-title">S-GW</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified app-layer" style="animation-delay: 0.1s">
+                        GTP-C Control
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.2s">
+                        GTP-U Data
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.3s">
+                        UDP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.4s">
+                        IP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.5s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.6s">
+                        Fiber/Copper
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+<!-- P-GW (PDN Gateway) -->
+            <div class="network-node">
+                <div class="interface-label">SGi</div>
+                <div class="node-title">P-GW</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified app-layer" style="animation-delay: 0.1s">
+                        GTP-C Control
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.2s">
+                        GTP-UIC
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.3s">
+                        UDP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.4s">
+                        IP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.5s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.6s">
+                        Fiber/Copper
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+
+            <!-- INS PE1 Router (Provider Edge 1) -->
+            <div class="network-node">
+                <div class="interface-label">MPLS Edge</div>
+                <div class="node-title">INS PE1</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.1s">
+                        TCP/UDP (Control + Data)
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.2s">
+                        IP → MPLS Encapsulation
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        MPLS Labels
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Fiber Backbone
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-arrow">⟶</div>
+            
+            <!-- INS P0 Router (Provider) -->
+            <div class="network-node">
+                <div class="interface-label">MPLS Core</div>
+                <div class="node-title">INS P0</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.1s">
+                        Pure MPLS Switching
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.2s">
+                        MPLS Label Swap
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        No IP Lookup
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Fiber Backbone
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connection-arrow">⟶</div>
+            
+            <!-- INS PE2 Router (Provider Edge 2) -->
+            <div class="network-node">
+                <div class="interface-label">MPLS Edge</div>
+                <div class="node-title">INS PE2</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.1s">
+                        TCP/UDP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.2s">
+                        MPLS → IP Decapsulation
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        IP Routing
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Fiber/Copper
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connection-arrow">⟶</div>
+            
+            <!-- Ookla Server -->
+            <div class="network-node">
+                <div class="interface-label">Internet</div>
+                <div class="node-title">Ookla</div>
+                <div class="protocol-stack-unified">
+                    <div class="protocol-layer-unified app-layer" style="animation-delay: 0.1s">
+                        Speedtest Service
+                    </div>
+                    <div class="protocol-layer-unified transport-layer" style="animation-delay: 0.2s">
+                        TCP/HTTP
+                    </div>
+                    <div class="protocol-layer-unified network-layer" style="animation-delay: 0.3s">
+                        IP
+                    </div>
+                    <div class="protocol-layer-unified data-layer" style="animation-delay: 0.4s">
+                        Ethernet
+                    </div>
+                    <div class="protocol-layer-unified physical-layer" style="animation-delay: 0.5s">
+                        Data Center Connectivity
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <!-- MPLS Architecture Visual Explanation -->
+        <div class="scroll-container">
+            <div class="unified-diagram" style="margin-top: 50px; min-width: 1200px;">
+                <div class="network-node" style="flex: 2; width: auto; max-width: 1100px;">
+                    <div class="node-title">MPLS Node Architecture</div>
+                    <div class="protocol-stack-unified">
+                        <div class="mpls-transport" style="animation-delay: 0.1s">
+                            <div class="mpls-box">IP Packet</div>
+                            <div class="mpls-arrow">→</div>
+                            <div class="mpls-box">+MPLS Label at PE1</div>
+                            <div class="mpls-arrow">→</div>
+                            <div class="mpls-box">Switch Label at P0</div>
+                            <div class="mpls-arrow">→</div>
+                            <div class="mpls-box">-MPLS Label at PE2</div>
+                            <div class="mpls-arrow">→</div>
+                            <div class="mpls-box">IP Packet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend-unified" style="margin-top: 40px;">
+            <div class="legend-section">
+                <div class="legend-title">MPLS Network Structure</div>
+                <div class="legend-item"><strong>Provider Edge Router (PE):</strong> Sits at the boundary of the MPLS network, performing label imposition (ingress) or disposition (egress).</div>
+                <div class="legend-item"><strong>Provider Router (P):</strong> Core MPLS router that performs label switching without IP lookup, providing high-speed forwarding.</div>
+                <div class="legend-item"><strong>Label Switching Path (LSP):</strong> The route through an MPLS network followed by packets assigned the same label.</div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-title">Protocol Layers</div>
+                <div class="legend-item"><strong>Application:</strong> End-user services like Speedtest, web browsing, streaming</div>
+                <div class="legend-item"><strong>Transport:</strong> TCP/UDP for end-to-end connections, GTP for tunneling</div>
+                <div class="legend-item"><strong>Network:</strong> IP routing and addressing, MPLS label switching</div>
+                <div class="legend-item"><strong>Data Link:</strong> Ethernet framing and addressing</div>
+                <div class="legend-item"><strong>Physical:</strong> Fiber optics, copper, radio waves</div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-title">MPLS Backbones</div>
+                <div class="legend-item"><strong>MPLS Backbone:</strong> High-speed core network using label switching for efficient and deterministic routing.</div>
+                <div class="legend-item"><strong>EPC Backbone:</strong> Mobile core network connecting S-GW, P-GW and other elements.</div>
+                <div class="legend-item"><strong>ISP Backbone:</strong> Internet Service Provider's core network (INS PE1, P0, PE2).</div>
+                <div class="legend-item"><strong>Internet Backbone:</strong> Global network connecting ISPs to content providers like Ookla.</div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-title">Key Protocols</div>
+                <div class="legend-item"><strong>GTP-UIC:</strong> GTP User, Control and Interface management protocol between S-GW and P-GW.</div>
+                <div class="legend-item"><strong>GTP-U:</strong> GPRS Tunneling Protocol for User plane data.</div>
+                <div class="legend-item"><strong>GTP-C:</strong> GPRS Tunneling Protocol for Control plane signaling.</div>
+                <div class="legend-item"><strong>PDCP/RLC/MAC:</strong> Radio interface protocols for efficient data transmission over LTE.</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Animation control - add delay for each protocol stack based on node position
+        document.addEventListener('DOMContentLoaded', function() {
+            const nodes = document.querySelectorAll('.network-node');
+            
+            nodes.forEach((node, index) => {
+                const layers = node.querySelectorAll('.protocol-layer-unified');
+                
+                layers.forEach((layer, layerIndex) => {
+                    // Create a sequential delay for each layer in each node
+                    const nodeDelay = index * 0.1;
+                    const existingDelay = parseFloat(layer.style.animationDelay || '0s');
+                    layer.style.animationDelay = (existingDelay + nodeDelay) + 's';
+                });
+            });
+            
+            // Automatically scroll to show the full width of the diagram
+            const scrollContainers = document.querySelectorAll('.scroll-container');
+            scrollContainers.forEach(container => {
+                // Add a subtle horizontal scrolling animation hint
+                setTimeout(function() {
+                    container.scrollLeft = 50;
+                    setTimeout(function() { 
+                        container.scrollLeft = 0;
+                    }, 800);
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

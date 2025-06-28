@@ -1,9 +1,133 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid px-4">
-    <h1 class="mt-4">{{ title }}</h1>
-    <p class="mb-4">This page will provide a detailed reference for EUTRAN network architecture, protocols, and KPIs. Implementation is in progress.</p>
+<style>
+    /* Technical Deep Dive Specific Styles */
+    .dashboard-card {
+        background-color: #1e1e2f;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+    }
+    
+    .card-title {
+        color: #ffffff;
+        border-bottom: 1px solid #4e73df;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .tech-intro-header {
+        background: linear-gradient(to right, #1e1e2f, #27293d);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14);
+    }
+    
+    .tab-content {
+        padding: 15px 0;
+    }
+    
+    /* MPLS Diagram Styling */
+    .mpls-diagram-container {
+        background-color: #27293d;
+        border-radius: 10px;
+        overflow-x: auto;
+    }
+    
+    .node-box {
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .eNodeB {
+        background-color: #4e73df;
+    }
+    
+    .mpls-pe-1, .mpls-pe-2 {
+        background-color: #36b9cc;
+    }
+    
+    .mpls-p {
+        background-color: #1cc88a;
+    }
+    
+    .sgw-pgw {
+        background-color: #f6c23e;
+    }
+    
+    .internet {
+        background-color: #e74a3b;
+    }
+    
+    .node-description {
+        font-size: 0.8rem;
+        color: #ccc;
+        margin-top: 5px;
+    }
+    
+    .mpls-paths {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+    
+    .lsp-primary {
+        color: #1cc88a;
+        border-bottom: 2px solid #1cc88a;
+        padding: 5px 10px;
+    }
+    
+    .lsp-backup {
+        color: #f6c23e;
+        border-bottom: 2px dashed #f6c23e;
+        padding: 5px 10px;
+    }
+    
+    .kpi-table th {
+        background-color: #4e73df;
+        color: white;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="tech-intro-header">
+                <h2 class="text-white">Technical Deep Dive</h2>
+                <p class="text-light">
+                    Welcome to the Technical Deep Dive section of the Mobile QoE Tool. This area provides detailed technical information about mobile network architecture, protocols, and key performance indicators relevant to Quality of Experience (QoE) analysis.
+                </p>
+                <p class="text-light">
+                    Use the tabs below to explore different aspects of mobile network technology and understand how various components impact the end-user experience.
+                </p>
+            </div>
+            
+            <!-- Navigation tabs for different sections -->
+            <ul class="nav nav-tabs mb-4" id="techDeepDiveTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="eutran-tab" data-bs-toggle="tab" data-bs-target="#eutran-content" type="button" role="tab">EUTRAN Architecture</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ran-tab" data-bs-toggle="tab" data-bs-target="#ran-content" type="button" role="tab">RAN Technology</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="mpls-tab" data-bs-toggle="tab" data-bs-target="#mpls-content" type="button" role="tab">IP-MPLS Transport</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="kpi-tab" data-bs-toggle="tab" data-bs-target="#kpi-content" type="button" role="tab">KPIs</button>
+                </li>
+            </ul>
+    
+    <div class="tab-content" id="techDeepDiveContent">    
+    <!-- EUTRAN Architecture Tab Content -->
+    <div class="tab-pane fade show active" id="eutran-content" role="tabpanel">
     <div class="dashboard-card mb-4">
         <div class="card-body">
             <h5 class="card-title">EUTRAN Network Architecture</h5>
@@ -153,5 +277,793 @@
             </div>
         </div>
     </div>
-</div>
+    </div> <!-- End of EUTRAN tab content -->
+    
+    <!-- RAN Technology Tab Content -->
+    <div class="tab-pane fade" id="ran-content" role="tabpanel">
+        <div class="dashboard-card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Radio Access Network (RAN) Technologies</h5>
+                <p>The Radio Access Network (RAN) is the part of a mobile telecommunications system that connects user equipment to the core network through radio connections.</p>
+                
+                <h6 class="mt-4 mb-3">LTE RAN Architecture</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">eNodeB Components</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark text-white">Radio Resource Control (RRC)</li>
+                                    <li class="list-group-item bg-dark text-white">Packet Data Convergence Protocol (PDCP)</li>
+                                    <li class="list-group-item bg-dark text-white">Radio Link Control (RLC)</li>
+                                    <li class="list-group-item bg-dark text-white">Medium Access Control (MAC)</li>
+                                    <li class="list-group-item bg-dark text-white">Physical Layer (PHY)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">eNodeB Interfaces</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark text-white">LTE-Uu: Interface between UE and eNodeB</li>
+                                    <li class="list-group-item bg-dark text-white">X2: Interface between eNodeBs</li>
+                                    <li class="list-group-item bg-dark text-white">S1-MME: Control plane between eNodeB and MME</li>
+                                    <li class="list-group-item bg-dark text-white">S1-U: User plane between eNodeB and S-GW</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">Radio Resource Management</h6>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Function</th>
+                                <th>Description</th>
+                                <th>Impact on QoE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Radio Bearer Control</td>
+                                <td>Management of radio bearers (establishment, maintenance, release)</td>
+                                <td>Direct impact on connection establishment delay and service availability</td>
+                            </tr>
+                            <tr>
+                                <td>Radio Admission Control</td>
+                                <td>Decides whether new radio bearer requests are accepted</td>
+                                <td>Affects congestion and service quality during high load</td>
+                            </tr>
+                            <tr>
+                                <td>Connection Mobility Control</td>
+                                <td>Manages mobility of radio connections (handovers)</td>
+                                <td>Critical for maintaining service continuity during movement</td>
+                            </tr>
+                            <tr>
+                                <td>Dynamic Resource Allocation</td>
+                                <td>Scheduler function that allocates and de-allocates resources to UEs</td>
+                                <td>Directly impacts throughput, latency, and jitter</td>
+                            </tr>
+                            <tr>
+                                <td>Inter-cell Interference Coordination</td>
+                                <td>Manages interference between cells to optimize performance</td>
+                                <td>Affects edge-user performance and overall capacity</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h6 class="mt-4 mb-3">Physical Layer Technologies</h6>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">Downlink: OFDMA</div>
+                            <div class="card-body">
+                                <p>Orthogonal Frequency Division Multiple Access (OFDMA) is used in LTE downlink transmission:</p>
+                                <ul>
+                                    <li>Divides bandwidth into multiple narrowband subcarriers (15 kHz spacing)</li>
+                                    <li>Enables multi-user scheduling in both time and frequency domains</li>
+                                    <li>Provides resistance to multipath fading</li>
+                                    <li>Supports flexible bandwidth allocations (1.4, 3, 5, 10, 15, 20 MHz)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">Uplink: SC-FDMA</div>
+                            <div class="card-body">
+                                <p>Single Carrier Frequency Division Multiple Access (SC-FDMA) is used in LTE uplink transmission:</p>
+                                <ul>
+                                    <li>Similar to OFDMA but with an additional DFT processing step</li>
+                                    <li>Provides lower Peak-to-Average Power Ratio (PAPR)</li>
+                                    <li>Improves power efficiency for the UE (extended battery life)</li>
+                                    <li>Requires contiguous resource block allocation for a single user</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">MIMO Technology in LTE</h6>
+                <p>Multiple Input Multiple Output (MIMO) antenna systems increase spectral efficiency:</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>Transmit Diversity:</strong> Improves signal robustness through redundancy</li>
+                            <li><strong>Spatial Multiplexing:</strong> Increases data rates by transmitting different data streams in parallel</li>
+                            <li><strong>Beamforming:</strong> Focuses signal energy toward specific users to improve SNR</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>2x2 MIMO:</strong> Basic configuration in LTE with 2 antennas each at transmitter and receiver</li>
+                            <li><strong>4x4 MIMO:</strong> Advanced configuration supporting higher throughput</li>
+                            <li><strong>Massive MIMO:</strong> Uses large numbers of antennas (primarily in 5G) for improved capacity</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- IP-MPLS Transport Tab Content -->
+    <div class="tab-pane fade" id="mpls-content" role="tabpanel">
+        <div class="dashboard-card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">IP-MPLS Transport Network Architecture</h5>
+                <p>Multiprotocol Label Switching (MPLS) is a high-performance packet forwarding technology that integrates the intelligence of routing with the performance of switching to create an efficient transport mechanism for mobile backhaul and core networks.</p>
+                
+                <div class="alert alert-info mb-4">
+                    <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Mobile Network Domain Structure</h6>
+                    <p>The mobile network comprises several interconnected domains, each with specific functions and equipment:</p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">RAN Domain</div>
+                            <div class="card-body">
+                                <p>Radio Access Network components:</p>
+                                <ul>
+                                    <li><strong>UE (User Equipment)</strong>: Mobile devices connecting to the network</li>
+                                    <li><strong>eNodeB</strong>: Base stations providing radio connectivity to UEs</li>
+                                </ul>
+                                <p class="mt-3">The RAN domain connects users to the mobile network and handles radio resource management.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">EUTRAN Domain</div>
+                            <div class="card-body">
+                                <p>Evolved Universal Terrestrial Radio Access Network components:</p>
+                                <ul>
+                                    <li><strong>UE</strong>: User devices</li>
+                                    <li><strong>eNodeB</strong>: LTE base stations</li>
+                                    <li><strong>S-GW (Serving Gateway)</strong>: Routes user data between eNodeB and P-GW</li>
+                                    <li><strong>P-GW (Packet Data Network Gateway)</strong>: Connects to external networks</li>
+                                    <li><strong>IGW</strong>: Internet Gateway providing external connectivity</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">Internet Domain</div>
+                            <div class="card-body">
+                                <p>Internet connectivity components:</p>
+                                <ul>
+                                    <li><strong>PE1 (Provider Edge 1)</strong>: Edge router connecting to international networks</li>
+                                    <li><strong>P0 (Provider Core)</strong>: Core router providing transit services</li>
+                                    <li><strong>PE2 (Provider Edge 2)</strong>: Edge router connecting to content providers</li>
+                                    <li><strong>Ookla Server</strong>: Speed test server for network performance testing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-warning">Core Domain</div>
+                            <div class="card-body">
+                                <p>Mobile Core Network components:</p>
+                                <ul>
+                                    <li><strong>MME (Mobility Management Entity)</strong>: Controls signaling for mobility and security</li>
+                                    <li><strong>HSS (Home Subscriber Server)</strong>: Central user database</li>
+                                    <li><strong>PCRF (Policy and Charging Rules Function)</strong>: Policy enforcement</li>
+                                    <li><strong>S-GW/P-GW</strong>: User plane gateways</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-lg-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">MPLS Network Components</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark text-white"><strong>Label Edge Router (LER/PE):</strong> Entry/exit points to the MPLS network</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>Label Switch Router (LSR/P):</strong> Core MPLS routers that forward packets based on labels</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>Label Distribution Protocol (LDP):</strong> Establishes label mappings for routes</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>Resource Reservation Protocol (RSVP-TE):</strong> Used for traffic engineering</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>Label Switched Path (LSP):</strong> Predetermined path through the MPLS network</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">Benefits of MPLS in Mobile Networks</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark text-white"><strong>Traffic Engineering:</strong> Enables precise control over traffic flows</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>QoS Support:</strong> Provides differentiated service levels for various traffic types</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>Fast Reroute:</strong> Sub-50ms protection switching for high availability</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>Scalability:</strong> Supports large-scale networks with millions of routes</li>
+                                    <li class="list-group-item bg-dark text-white"><strong>Service Convergence:</strong> Single network for multiple services (voice, data, video)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">IP-MPLS Domain Structure</h6>
+                <p>The Transport network consists of three distinct IP-MPLS domains, each serving different segments of the mobile network:</p>
+                
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">IP-MPLS Backhaul</div>
+                            <div class="card-body">
+                                <p><strong>Function:</strong> Connects RAN side via IP VRF to the Core Data Network</p>
+                                <ul>
+                                    <li>Utilizes <strong>Microwave</strong> (10Mbps - 2.5Gbps) and <strong>Fiber</strong> (100Mbps - 100Gbps) transport mediums</li>
+                                    <li>Connects to Core Data Network via Inter-AS Option A</li>
+                                    <li>Router naming convention: <code>PEx1--Px0, PExx2</code></li>
+                                </ul>
+                                <p><strong>Primary Role:</strong> Aggregate traffic from eNodeBs and transport to Core Data Network</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">IP-MPLS Core Data Network</div>
+                            <div class="card-body">
+                                <p><strong>Function:</strong> Provides connectivity between Core Network elements</p>
+                                <ul>
+                                    <li>Connects <strong>S-GW</strong>, <strong>P-GW</strong>, and <strong>IGW</strong></li>
+                                    <li>Delivers L2VPN and L3VPN services for Core Network traffic</li>
+                                    <li>Router naming convention: <code>PEyy1, Pyy0, PEyy2</code></li>
+                                </ul>
+                                <p><strong>Primary Role:</strong> High-capacity transport between Core Network elements with strict QoS guarantees</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">IP-MPLS International/Internet</div>
+                            <div class="card-body">
+                                <p><strong>Function:</strong> Provides connectivity to external networks and internet</p>
+                                <ul>
+                                    <li>Router naming convention: <code>PE1, P0, PE2</code></li>
+                                    <li>Direct connection to Ookla speed test servers</li>
+                                    <li>Provides peering with international carriers and content providers</li>
+                                </ul>
+                                <p><strong>Primary Role:</strong> International connectivity and internet access for mobile subscribers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">MPLS Label Operations</h6>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Operation</th>
+                                <th>Description</th>
+                                <th>Router Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Push</strong></td>
+                                <td>Add MPLS label to incoming packet</td>
+                                <td>Ingress LER/PE</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Swap</strong></td>
+                                <td>Replace existing MPLS label with new one</td>
+                                <td>Transit LSR/P</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pop</strong></td>
+                                <td>Remove MPLS label from packet</td>
+                                <td>Egress LER/PE</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h6 class="mt-4 mb-3">MPLS in Mobile Backhaul Architecture</h6>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mpls-architecture-diagram">
+                            <!-- Interactive diagram placeholder -->
+                            <div class="text-center">
+                                <div class="mpls-diagram-container p-3 border border-primary rounded">
+                                    <div class="row text-center">
+                                        <div class="col-md-2">
+                                            <div class="node-box eNodeB p-2 mb-2">eNodeB</div>
+                                            <div class="node-description">Cell Site</div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="node-box mpls-pe-1 p-2 mb-2">PE Router</div>
+                                            <div class="node-description">Aggregation</div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="node-box mpls-p p-2 mb-2">P Router</div>
+                                            <div class="node-description">Core</div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="node-box mpls-pe-2 p-2 mb-2">PE Router</div>
+                                            <div class="node-description">Service Edge</div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="node-box sgw-pgw p-2 mb-2">S/P-GW</div>
+                                            <div class="node-description">Packet Core</div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="node-box internet p-2 mb-2">Internet</div>
+                                            <div class="node-description">External Network</div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-12 text-center">
+                                            <div class="mpls-paths">
+                                                <div class="lsp-primary">Primary LSP</div>
+                                                <div class="lsp-backup">Backup LSP</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">MPLS VPN Services for Mobile Networks</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">L3VPN (Layer 3 VPN)</div>
+                            <div class="card-body">
+                                <p>Layer 3 MPLS VPNs (RFC 4364/2547bis) provide logical network separation for different services:</p>
+                                <ul>
+                                    <li>Separate routing domains using VRF (Virtual Routing and Forwarding)</li>
+                                    <li>Used for separating S1-U, S1-C, and X2 traffic</li>
+                                    <li>Supports overlapping IP addressing between different VPNs</li>
+                                    <li>Uses BGP for distributing VPN routes between PE routers</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">L2VPN (Layer 2 VPN)</div>
+                            <div class="card-body">
+                                <p>Layer 2 MPLS services provide Ethernet or other L2 connectivity across MPLS network:</p>
+                                <ul>
+                                    <li>VPWS (Virtual Private Wire Service): Point-to-point L2 circuits</li>
+                                    <li>VPLS (Virtual Private LAN Service): Multipoint L2 connectivity</li>
+                                    <li>EVPN (Ethernet VPN): Enhanced L2 VPN with BGP control plane</li>
+                                    <li>Used for transparent backhaul of cell site traffic</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">QoS in MPLS Networks</h6>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Traffic Class</th>
+                                <th>Mobile Service</th>
+                                <th>DSCP/EXP Marking</th>
+                                <th>PHB Treatment</th>
+                                <th>QoS Requirements</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Control Plane</td>
+                                <td>S1-MME, X2-C, S11</td>
+                                <td>CS6/EXP 6</td>
+                                <td>Network Control</td>
+                                <td>Low latency, highest priority</td>
+                            </tr>
+                            <tr>
+                                <td>Voice</td>
+                                <td>VoLTE traffic</td>
+                                <td>EF/EXP 5</td>
+                                <td>Expedited Forwarding</td>
+                                <td>&lt;100ms latency, &lt;30ms jitter</td>
+                            </tr>
+                            <tr>
+                                <td>Interactive Video</td>
+                                <td>Video calls</td>
+                                <td>AF41/EXP 4</td>
+                                <td>Assured Forwarding 4</td>
+                                <td>&lt;150ms latency, &lt;30ms jitter</td>
+                            </tr>
+                            <tr>
+                                <td>Premium Data</td>
+                                <td>Interactive applications</td>
+                                <td>AF31/EXP 3</td>
+                                <td>Assured Forwarding 3</td>
+                                <td>&lt;300ms latency</td>
+                            </tr>
+                            <tr>
+                                <td>Standard Data</td>
+                                <td>Web browsing, email</td>
+                                <td>AF21/EXP 2</td>
+                                <td>Assured Forwarding 2</td>
+                                <td>Best effort with guarantees</td>
+                            </tr>
+                            <tr>
+                                <td>Best Effort</td>
+                                <td>Background transfers</td>
+                                <td>BE/EXP 0</td>
+                                <td>Best Effort</td>
+                                <td>No guarantees</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h6 class="mt-4 mb-3">Segment Routing MPLS</h6>
+                <p>Segment Routing is a modern network architecture that simplifies MPLS operations:</p>
+                <ul>
+                    <li><strong>Source Routing:</strong> Path selection at ingress node instead of hop-by-hop signaling</li>
+                    <li><strong>Simplified Control Plane:</strong> No need for LDP or RSVP-TE protocols</li>
+                    <li><strong>Traffic Engineering:</strong> Flexible path selection with Segment Routing Traffic Engineering (SR-TE)</li>
+                    <li><strong>Fast Reroute:</strong> TI-LFA (Topology Independent Loop-Free Alternate) for sub-50ms protection</li>
+                    <li><strong>Scalability:</strong> Reduced state in the network as state is maintained at the edge</li>
+                </ul>
+                
+                <h6 class="mt-4 mb-3">Transport Mediums for Mobile Backhaul</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">Fiber Transport (100Mbps to 100Gbps)</div>
+                            <div class="card-body">
+                                <p>Fiber optic transmission is the preferred medium for mobile backhaul, offering:</p>
+                                <ul>
+                                    <li><strong>High Capacity:</strong> From 100Mbps up to 100Gbps per wavelength</li>
+                                    <li><strong>Low Latency:</strong> Typically < 0.5ms per 100km</li>
+                                    <li><strong>High Reliability:</strong> > 99.999% availability with proper protection</li>
+                                    <li><strong>Technologies:</strong> GPON/EPON, Metro Ethernet, DWDM, OTN</li>
+                                    <li><strong>Best For:</strong> High-density urban areas, data centers, and core networks</li>
+                                </ul>
+                                <div class="mt-3">
+                                    <h6 class="card-subtitle mb-2 text-muted">Deployment Types:</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-dark">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Dark Fiber</td>
+                                                    <td>Dedicated fiber pair with operator-owned equipment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Leased Line</td>
+                                                    <td>Managed service with SLA guarantees</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>WDM</td>
+                                                    <td>Multiple wavelengths over shared fiber infrastructure</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-3">
+                            <div class="card-header bg-primary">Microwave Transport (10Mbps - 2.5Gbps)</div>
+                            <div class="card-body">
+                                <p>Microwave transmission provides wireless backhaul options for locations where fiber is unavailable:</p>
+                                <ul>
+                                    <li><strong>Medium Capacity:</strong> From 10Mbps to 2.5Gbps depending on frequency band</li>
+                                    <li><strong>Medium Latency:</strong> Typically 0.1-1ms per hop</li>
+                                    <li><strong>Weather Dependent:</strong> Rain fade impacts higher frequency bands</li>
+                                    <li><strong>Frequency Bands:</strong> 6-42 GHz licensed, 60-80 GHz E-band</li>
+                                    <li><strong>Best For:</strong> Rural areas, difficult terrain, temporary deployments</li>
+                                </ul>
+                                <div class="mt-3">
+                                    <h6 class="card-subtitle mb-2 text-muted">Key Microwave Technologies:</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-dark">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Traditional (6-42 GHz)</td>
+                                                    <td>50-500 Mbps, 5-15km range</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>E-Band (70-80 GHz)</td>
+                                                    <td>1-2.5 Gbps, 1-5km range</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>MIMO & CA</td>
+                                                    <td>Multiple input/output and carrier aggregation for capacity boost</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- KPIs Tab Content -->
+    <div class="tab-pane fade" id="kpi-content" role="tabpanel">
+        <div class="dashboard-card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Key Performance Indicators (KPIs)</h5>
+                <p class="mb-3">KPIs are critical metrics used to monitor and evaluate the performance, quality, and health of mobile network components.</p>
+                
+                <ul class="nav nav-pills mb-3" id="kpi-category-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="ran-kpi-tab" data-bs-toggle="pill" data-bs-target="#ran-kpi" type="button" role="tab">RAN KPIs</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="core-kpi-tab" data-bs-toggle="pill" data-bs-target="#core-kpi" type="button" role="tab">Core Network KPIs</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="transport-kpi-tab" data-bs-toggle="pill" data-bs-target="#transport-kpi" type="button" role="tab">Transport KPIs</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="end-to-end-kpi-tab" data-bs-toggle="pill" data-bs-target="#e2e-kpi" type="button" role="tab">End-to-End KPIs</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="kpi-category-content">
+                    <!-- RAN KPIs -->
+                    <div class="tab-pane fade show active" id="ran-kpi" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover kpi-table">
+                                <thead>
+                                    <tr>
+                                        <th>KPI</th>
+                                        <th>Description</th>
+                                        <th>Formula / Measurement</th>
+                                        <th>Target Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>RRC Setup Success Rate</td>
+                                        <td>Measures the success of establishing a Radio Resource Control connection.</td>
+                                        <td>(Successful RRC Connections / Total RRC Attempts) * 100%</td>
+                                        <td>&gt; 98%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>E-RAB Setup Success Rate</td>
+                                        <td>Success rate of establishing an E-UTRAN Radio Access Bearer.</td>
+                                        <td>(Successful E-RAB Setups / Total E-RAB Attempts) * 100%</td>
+                                        <td>&gt; 98%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Handover Success Rate</td>
+                                        <td>Measures the success of handovers between eNodeBs.</td>
+                                        <td>(Successful Handovers / Total Handover Attempts) * 100%</td>
+                                        <td>&gt; 97%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cell Availability</td>
+                                        <td>Percentage of time a cell is operational and available for service.</td>
+                                        <td>(Uptime / Total Time) * 100%</td>
+                                        <td>&gt; 99.9%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>RSRP (Reference Signal Received Power)</td>
+                                        <td>Power of the LTE reference signals spread over the full bandwidth.</td>
+                                        <td>Measured in dBm</td>
+                                        <td>&gt; -100 dBm (Good)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>SINR (Signal-to-Interference-plus-Noise Ratio)</td>
+                                        <td>Ratio of signal power to the noise and interference power.</td>
+                                        <td>Signal Power / (Interference Power + Noise Power)</td>
+                                        <td>&gt; 10 dB (Good)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Core Network KPIs -->
+                    <div class="tab-pane fade" id="core-kpi" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover kpi-table">
+                                <thead>
+                                    <tr>
+                                        <th>KPI</th>
+                                        <th>Description</th>
+                                        <th>Formula / Measurement</th>
+                                        <th>Target Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Attach Success Rate</td>
+                                        <td>Measures the success of UE attaching to the network.</td>
+                                        <td>(Successful Attaches / Total Attach Attempts) * 100%</td>
+                                        <td>&gt; 99%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>PDN Connection Success Rate</td>
+                                        <td>Success rate of establishing a Packet Data Network connection.</td>
+                                        <td>(Successful PDN Connections / Total PDN Connection Attempts) * 100%</td>
+                                        <td>&gt; 98%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dedicated Bearer Success Rate</td>
+                                        <td>Success rate of establishing dedicated EPS bearers.</td>
+                                        <td>(Successful Bearer Activations / Total Bearer Activation Attempts) * 100%</td>
+                                        <td>&gt; 98%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>S1 Signaling Success Rate</td>
+                                        <td>Reliability of the S1-MME interface signaling.</td>
+                                        <td>(Successful S1 Procedures / Total S1 Procedures) * 100%</td>
+                                        <td>&gt; 99.5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MME CPU Utilization</td>
+                                        <td>CPU utilization of the MME server/VM.</td>
+                                        <td>Measured as percentage of total available CPU</td>
+                                        <td>&lt; 70%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>S-GW/P-GW Session Setup Time</td>
+                                        <td>Time taken to establish a session through the gateways.</td>
+                                        <td>Measured in milliseconds</td>
+                                        <td>&lt; 200 ms</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Transport KPIs -->
+                    <div class="tab-pane fade" id="transport-kpi" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover kpi-table">
+                                <thead>
+                                    <tr>
+                                        <th>KPI</th>
+                                        <th>Description</th>
+                                        <th>Formula / Measurement</th>
+                                        <th>Target Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>GTP-U Packet Loss</td>
+                                        <td>Percentage of lost user data packets over the GTP tunnel.</td>
+                                        <td>(Lost Packets / Total Packets Sent) * 100%</td>
+                                        <td>&lt; 0.1%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>S1-U Latency</td>
+                                        <td>Round-trip time between eNodeB and S-GW.</td>
+                                        <td>Measured in milliseconds</td>
+                                        <td>&lt; 15 ms</td>
+                                    </tr>
+                                    <tr>
+                                        <td>X2 Latency</td>
+                                        <td>Round-trip time between neighboring eNodeBs.</td>
+                                        <td>Measured in milliseconds</td>
+                                        <td>&lt; 10 ms</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MPLS LSP Availability</td>
+                                        <td>Percentage of time the LSP is operational.</td>
+                                        <td>(Uptime / Total Time) * 100%</td>
+                                        <td>&gt; 99.999%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Transport Network Jitter</td>
+                                        <td>Variation in packet delay over the transport network.</td>
+                                        <td>Measured in milliseconds</td>
+                                        <td>&lt; 5 ms</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MPLS FRR Switchover Time</td>
+                                        <td>Time taken to switch to backup path after failure.</td>
+                                        <td>Measured in milliseconds</td>
+                                        <td>&lt; 50 ms</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- End-to-End KPIs -->
+                    <div class="tab-pane fade" id="e2e-kpi" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover kpi-table">
+                                <thead>
+                                    <tr>
+                                        <th>KPI</th>
+                                        <th>Description</th>
+                                        <th>Formula / Measurement</th>
+                                        <th>Target Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>VoLTE Setup Time</td>
+                                        <td>Time taken to establish a VoLTE call.</td>
+                                        <td>Measured from dialing to ringing in milliseconds</td>
+                                        <td>&lt; 2000 ms</td>
+                                    </tr>
+                                    <tr>
+                                        <td>VoLTE MOS</td>
+                                        <td>Mean Opinion Score for voice quality.</td>
+                                        <td>Scale of 1 to 5</td>
+                                        <td>&gt; 3.8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Service Accessibility</td>
+                                        <td>Percentage of successful service access attempts.</td>
+                                        <td>(Successful Service Accesses / Total Service Access Attempts) * 100%</td>
+                                        <td>&gt; 98%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>HTTP Download Throughput</td>
+                                        <td>Average download speed for HTTP/web traffic.</td>
+                                        <td>Measured in Mbps</td>
+                                        <td>Depends on subscription</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Web Browsing Response Time</td>
+                                        <td>Time taken to load a standard reference web page.</td>
+                                        <td>Measured in seconds</td>
+                                        <td>&lt; 3 seconds</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Round-Trip Time (RTT)</td>
+                                        <td>End-to-end time for a packet to travel from UE to a server and back.</td>
+                                        <td>Measured in milliseconds</td>
+                                        <td>&lt; 100 ms</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </div> <!-- End of tab-content -->
+</div> <!-- End of container-fluid -->
 {% endblock %}
