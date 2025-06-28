@@ -66,3 +66,6 @@ screenshots/
 
 # Generated documentation
 app/static/docs/*.pdf
+
+# Unused files archive
+unused-files/
