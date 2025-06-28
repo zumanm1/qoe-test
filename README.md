@@ -132,9 +132,39 @@ flask seed-network
 
 Run the test suite with:
 
-```
+```bash
+# Run all tests
 pytest
+
+# Run with verbose output and coverage
+pytest -v --cov=app
+
+# Run specific test file
+pytest test_example.py
 ```
+
+For detailed testing guidance, see the [Contributor Guide](CONTRIBUTOR_GUIDE.md#testing-guide).
+
+## 🤝 Contributing
+
+**New contributors should start here**: [CONTRIBUTOR_GUIDE.md](CONTRIBUTOR_GUIDE.md)
+
+This comprehensive guide provides:
+- 🗺️ **Navigation tips**: Where to start (models → blueprints → services)
+- 🚀 **Setup checklist**: Step-by-step development environment setup
+- 🔄 **Migration workflow**: How to handle database changes safely
+- 🧪 **Testing best practices**: Writing and running tests effectively
+- 🐛 **Debugging tips**: Common issues and solutions
+- 📚 **Documentation reference**: How this README is organized
+
+### Quick Start for Contributors
+
+1. **Read the models first** (`app/models/`) to understand data structure
+2. **Explore blueprints** (`app/views/`) to see application logic
+3. **Check the services** (`app/services/`) for business logic
+4. **Run migrations** with `flask db upgrade`
+5. **Run tests** with `pytest -v`
+6. **Use debugging tools** like `flask shell` for interactive exploration
 
 ## License
 

@@ -2,24 +2,77 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     volumes:
-      # Mount the project directory to the container for live code updates
+      # Mount the project directory to the container for live code updates in development
       - .:/app
+      - ./logs:/app/logs
     environment:
-      # Set environment to development to enable debug mode and auto-reloading
-      - FLASK_ENV=development
-      # A default secret key for development. This should be changed in production.
-      - SECRET_KEY=a-secure-secret-key-for-development
+      - FLASK_ENV=${FLASK_ENV:-development}
+      - SECRET_KEY=${SECRET_KEY:-a-secure-secret-key-for-development}
+      - DATABASE_URL=postgresql://qoe_user:qoe_password@db:5432/qoe_tool
+      - REDIS_URL=redis://redis:6379/0
+      - WORKERS=4
+      - LOG_LEVEL=INFO
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-    image: redis:6-alpine
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=qoe_tool
+      - POSTGRES_USER=qoe_user
+      - POSTGRES_PASSWORD=qoe_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qoe_user -d qoe_tool"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
     volumes:
       - redis_data:/data
-    restart: always
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs:/var/log/nginx
+    depends_on:
+      - web
+    restart: unless-stopped
 
 volumes:
   postgres_data:

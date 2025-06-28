@@ -1,0 +1,51 @@
+[flake8]
+# Maximum line length
+max-line-length = 88
+
+# Ignore specific error codes
+ignore = 
+    # E203: whitespace before ':' (conflicts with black)
+    E203,
+    # W503: line break before binary operator (conflicts with black)
+    W503,
+    # F401: module imported but unused (common in __init__.py files)
+    F401
+
+# Exclude directories and files from linting
+exclude = 
+    .git,
+    __pycache__,
+    venv,
+    env,
+    .env,
+    .venv,
+    node_modules,
+    migrations,
+    .pytest_cache,
+    build,
+    dist,
+    *.egg-info
+
+# Maximum complexity for functions
+max-complexity = 10
+
+# Specify which files to check
+filename = *.py
+
+# Per-file ignores (if needed)
+per-file-ignores =
+    # Allow star imports in __init__.py files
+    __init__.py:F401,F403
+    # Allow unused imports in config files
+    config.py:F401
+    # Allow longer lines in migration files
+    migrations/*:E501
+
+# Enable specific plugins (optional)
+# select = E,W,F,C
+
+# Application import names (for import order checking)
+application-import-names = app
+
+# Import order style
+import-order-style = google

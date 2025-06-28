@@ -46,6 +46,23 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
     
+    # Enhanced security for production
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Strict'
+    REMEMBER_COOKIE_SECURE = True
+    
+    # Performance optimizations
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 20,
+        'pool_recycle': 3600,
+        'pool_pre_ping': True
+    }
+    
+    # Logging configuration
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
+    LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT', 'true').lower() == 'true'
+    
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
